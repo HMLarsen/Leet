@@ -1,0 +1,15 @@
+<div>
+	<h1 class="uk-heading-bullet">Criar evento</h1>
+	<form [formGroup]="createEventForm" (ngSubmit)="onSubmit()">
+		<div class="uk-margin">
+			<input class="uk-input" type="text" formControlName="name" placeholder="Nome">
+		</div>
+		<div class="uk-margin">
+			<textarea class="uk-textarea uk-height-small" formControlName="description"	placeholder="Descrição"></textarea>
+		</div>
+		<div class="uk-margin">
+			<input type="date" class="uk-input" formControlName="date">
+		</div>
+		<button type="submit" [disabled]="!createEventForm.valid" class="uk-button uk-button-primary">Criar</button>
+	</form>
+</div>
