@@ -5,7 +5,7 @@ import { Title } from '@angular/platform-browser';
 import { Router } from '@angular/router';
 import firebase from 'firebase/compat/app';
 
-declare var UIkit: any;
+declare var bootstrap: any;
 
 interface Profile {
 	email: string;
@@ -40,7 +40,7 @@ export class LoginComponent implements OnInit {
 						this.router.navigate(['/dashboard']);
 					} else {
 						this.auth.signOut();
-						UIkit.modal('#modal-sections').show();
+						new bootstrap.Modal(document.getElementById('noPermissionModal')).show();
 					}
 				});
 			});

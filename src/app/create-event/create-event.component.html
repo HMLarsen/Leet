@@ -1,15 +1,35 @@
 <div>
-	<h1 class="uk-heading-bullet">Criar evento</h1>
+	<h1 class="display-6">Criar evento</h1>
 	<form [formGroup]="createEventForm" (ngSubmit)="onSubmit()">
-		<div class="uk-margin">
-			<input class="uk-input" type="text" formControlName="name" placeholder="Nome">
+		<div class="form-floating">
+			<input type="text" class="form-control" id="name" formControlName="name">
+			<label for="name">Nome</label>
 		</div>
-		<div class="uk-margin">
-			<textarea class="uk-textarea uk-height-small" formControlName="description"	placeholder="Descrição"></textarea>
+		<div class="form-floating">
+			<textarea class="form-control" id="description" formControlName="description"
+				style="height: 100px;"></textarea>
+			<label for="description">Descrição</label>
 		</div>
-		<div class="uk-margin">
-			<input type="date" class="uk-input" formControlName="date">
+		<div class="form-floating">
+			<input type="datetime-local" class="form-control" formControlName="date">
+			<label for="description">Data</label>
 		</div>
-		<button type="submit" [disabled]="!createEventForm.valid" class="uk-button uk-button-primary">Criar</button>
+		<div>
+			<label>Line-Up</label>
+			<ul class="list-group" formArrayName="lineUp">
+				<li class="list-group-item d-flex" *ngFor="let _ of lineUp.controls; index as i">
+					<input type="text" class="form-control" [formControlName]="i">
+					<button type="button" class="btn btn-danger" (click)="deleteDj(i)">Excluir</button>
+				</li>
+			</ul>
+			<button type="button" class="btn btn-light" (click)="addDj()">Adicionar</button>
+		</div>
+		<div class="d-flex align-items-center justify-content-end">
+			<div class="form-check form-switch me-3">
+				<input class="form-check-input" type="checkbox" role="switch" id="active" formControlName="active">
+				<label class="form-check-label" for="active">Aceitando participações</label>
+			</div>
+			<button type="submit" [disabled]="!createEventForm.valid" class="btn btn-primary">Criar</button>
+		</div>
 	</form>
 </div>

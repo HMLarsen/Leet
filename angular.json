@@ -51,11 +51,10 @@
 						],
 						"styles": [
 							"src/styles.scss",
-							"uikit-3.9.4/css/uikit.min.css"
+							"node_modules/bootstrap/dist/css/bootstrap.min.css"
 						],
 						"scripts": [
-							"uikit-3.9.4/js/uikit.min.js",
-							"uikit-3.9.4/js/uikit-icons.min.js"
+							"node_modules/bootstrap/dist/js/bootstrap.min.js"
 						]
 					},
 					"configurations": {

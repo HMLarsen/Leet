@@ -1,31 +1,28 @@
-<div uk-sticky="sel-target: .uk-navbar-container; cls-active: uk-navbar-sticky; bottom: #transparent-sticky-navbar">
-	<nav class="uk-navbar-container" uk-navbar style="position: relative; z-index: 980;">
-		<div class="uk-navbar-left">
-			<ul class="uk-navbar-nav">
-				<li class="uk-active"><a href="#">Active</a></li>
-				<li>
-					<a href="#">Parent</a>
-					<div class="uk-navbar-dropdown">
-						<ul class="uk-nav uk-navbar-dropdown-nav">
-							<li class="uk-active"><a href="#">Active</a></li>
-							<li><a>Item</a></li>
-							<li><a>Item</a></li>
-						</ul>
-					</div>
+<nav class="navbar navbar-expand-lg navbar-light bg-light navbar-expand-sm">
+	<div class="container-fluid">
+		<a class="navbar-brand">Leet</a>
+		<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+			aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+			<span class="navbar-toggler-icon"></span>
+		</button>
+		<div class="collapse navbar-collapse" id="navbarNav">
+			<ul class="navbar-nav me-auto">
+				<li class="nav-item">
+					<a class="nav-link" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}" routerLink="/dashboard">Home</a>
 				</li>
-				<li><a href="#">Item</a></li>
+				<li class="nav-item">
+					<a class="nav-link" routerLinkActive="active" routerLink="/dashboard/create-event">Criar evento</a>
+				</li>
 			</ul>
-		</div>
-		<div class="uk-navbar-right">
-			<ul class="uk-navbar-nav">
-				<li *ngIf="auth.user | async as user">
-					<a (click)="logout()">Logout</a>
+			<ul class="navbar-nav" *ngIf="auth.user | async as user">
+				<li class="nav-item">
+					<button class="btn btn-outline-dark" (click)="logout()">Logout</button>
 				</li>
 			</ul>
 		</div>
-	</nav>
-</div>
+	</div>
+</nav>
 
-<div class="uk-padding">
+<div class="container-sm mt-5">
 	<router-outlet></router-outlet>
 </div>
