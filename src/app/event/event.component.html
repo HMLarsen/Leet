@@ -1,0 +1,35 @@
+<div class="container">
+	<div class="row justify-content-center">
+		<div class="spinner-border" role="status" *ngIf="loadingEvent">
+			<span class="visually-hidden">Loading...</span>
+		</div>
+		<p class="text-center" *ngIf="!loadingEvent && !event">Evento indisponível ou não encontrado.</p>
+		<div class="col-md-12" *ngIf="!loadingEvent && event && downloadLogoURL">
+			<div class="card">
+				<img class="card-img-top" class="img-fluid" [src]="downloadLogoURL" alt="event banner">
+				<div class="card-body">
+					<h5 class="card-title">{{ event.name }}</h5>
+					<h6 class="card-subtitle mb-4 text-muted" *ngIf="event.start">
+						{{ event.start.seconds * 1000 | date:'EEEE - dd/MM/yyyy HH:mm' | titlecase }}
+					</h6>
+
+					<p class="card-text text-justify mb-4">{{ event.description }}</p>
+
+					<div *ngIf="event.lineUp">
+						<h6>Line Up</h6>
+						<ul id="ul-line-up">
+							<li *ngFor="let dj of event.lineUp">
+								{{ dj }}
+							</li>
+						</ul>
+					</div>
+
+					<hr>
+					<div *ngIf="!event.active">
+						<h6 class="mb-0">Lista para o evento encerrada !!!</h6>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

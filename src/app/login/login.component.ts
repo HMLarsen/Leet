@@ -35,13 +35,14 @@ export class LoginComponent implements OnInit {
 				const userInfo = response.additionalUserInfo;
 				const email = (<Profile>userInfo?.profile).email;
 				const emailRef = this.afs.collection('auth').doc(email);
-				emailRef.get().subscribe(doc => {
+				const obsRef = emailRef.get().subscribe(doc => {
 					if (doc.exists) {
 						this.router.navigate(['/dashboard']);
 					} else {
 						this.auth.signOut();
 						new bootstrap.Modal(document.getElementById('noPermissionModal')).show();
 					}
+					obsRef.unsubscribe();
 				});
 			});
 	}
