@@ -1,0 +1,79 @@
+<div class="text-center" *ngIf="loadingEvent">
+	<div class="spinner-border ms-2" role="status">
+		<span class="visually-hidden">Loading...</span>
+	</div>
+</div>
+
+<div *ngIf="!loadingEvent">
+	<h1 class="display-6 mb-4">{{ editing ? ('Editar evento ' + editingEvent.name) : 'Criar evento' }}</h1>
+	<form [formGroup]="eventForm" (ngSubmit)="onSubmit()">
+		<fieldset [disabled]="loading">
+			<div class="mb-3">
+				<label for="banner" class="form-label">Banner</label>
+				<input class="form-control" type="file" id="banner" accept=".png,.jpg" (change)="bannerChange($event)"
+					[ngClass]="{ 'is-valid': getField('banner').valid, 'is-invalid': getField('banner').invalid && getField('banner').touched }">
+				<div class="invalid-feedback">
+					Obrigatório.
+				</div>
+				<small class="text-muted" *ngIf="editing">
+					<i class="bi-exclamation-circle"></i>
+					Deixe o banner vazio para que ele não seja atualizado.
+				</small>
+			</div>
+			<div class="mb-3">
+				<label for="name" class="form-label">Nome</label>
+				<input type="text" class="form-control"
+					[ngClass]="{ 'is-valid': getField('name').valid, 'is-invalid': getField('name').invalid && getField('name').touched }"
+					id="name" formControlName="name">
+				<div class="invalid-feedback">
+					Obrigatório e mínimo de 5 caracteres.
+				</div>
+			</div>
+			<div class="mb-3">
+				<label for="description" class="form-label">Descrição</label>
+				<textarea class="form-control" id="description" formControlName="description"
+					[ngClass]="{ 'is-valid': getField('description').valid, 'is-invalid': getField('description').invalid && getField('description').touched }"></textarea>
+				<div class="invalid-feedback">
+					Obrigatório e mínimo de 5 caracteres.
+				</div>
+			</div>
+			<div class="mb-3">
+				<label for="start" class="form-label">Data</label>
+				<input type="datetime-local" id="start" class="form-control" formControlName="start"
+					[ngClass]="{ 'is-valid': getField('start').valid, 'is-invalid': getField('start').invalid && getField('start').touched }">
+				<div class="invalid-feedback">
+					Preencha corretamente a data de início do evento
+				</div>
+			</div>
+			<div class="mb-3">
+				<label class="form-label d-block">Line-Up</label>
+				<ng-container formArrayName="lineUp">
+					<div class="d-flex align-items-center"
+						*ngFor="let _ of lineUp.controls; index as i; first as isFirst; last as isLast"
+						[ngClass]="{ 'mb-1': !isLast, 'mb-3': isLast }">
+						<span>{{ i + 1 }}&nbsp;&nbsp;</span>
+						<input type="text" class="form-control" name="djName" [formControlName]="i"
+							[ngClass]="{ 'me-1': !isFirst, 'is-valid': _.valid, 'is-invalid': _.invalid && _.touched }">
+						<button type="button" class="btn btn-danger" *ngIf="!isFirst" (click)="deleteDj(i)">
+							<i class="bi-person-x-fill"></i>
+						</button>
+					</div>
+				</ng-container>
+				<button type="button" class="btn btn-light" (click)="addDj()">
+					<i class="bi-plus-lg"></i>
+					Adicionar
+				</button>
+			</div>
+			<div class="d-flex align-items-center justify-content-end">
+				<div class="form-check form-switch me-3">
+					<input class="form-check-input" type="checkbox" role="switch" id="active" formControlName="active">
+					<label class="form-check-label" for="active">Aceitando participações</label>
+				</div>
+				<button type="submit" class="btn btn-primary">
+					<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true" *ngIf="loading"></span>
+					{{ loading ? (editing ? 'Atualizando' : 'Criando') : (editing ? 'Editar' : 'Criar') }}
+				</button>
+			</div>
+		</fieldset>
+	</form>
+</div>

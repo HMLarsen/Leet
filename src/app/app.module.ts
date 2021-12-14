@@ -21,8 +21,8 @@ import { LoginComponent } from './login/login.component';
 import { AngularFireModule } from '@angular/fire/compat';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { initializeApp, provideFirebaseApp } from '@angular/fire/app';
-import { CreateEventComponent } from './create-event/create-event.component';
-import { EventComponent } from './event/event.component';
+import { SetEventComponent } from './events/set-event/set-event.component';
+import { EventComponent } from './events/event/event.component';
 import { EventsComponent } from './events/events.component';
 
 @NgModule({
@@ -30,9 +30,9 @@ import { EventsComponent } from './events/events.component';
 		AppComponent,
 		LoginComponent,
 		DashboardComponent,
-		CreateEventComponent,
+		SetEventComponent,
 		EventComponent,
-  EventsComponent
+		EventsComponent
 	],
 	imports: [
 		BrowserModule,

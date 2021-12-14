@@ -27,10 +27,13 @@ export class EventsComponent implements OnInit {
 		this.eventService.getEvents()
 			.then(observable => {
 				const obsRef = observable.subscribe({
-					next: events => {
+					next: snapshot => {
 						this.loadingEvents = false;
-						this.events = events;
-						this.events.forEach(event => this.getEventBanner(event));
+						this.events = snapshot.docs.map(doc => {
+							const event = doc.data();
+							this.setEventBanner(event);
+							return event;
+						});
 						obsRef.unsubscribe();
 					},
 					error: () => {
@@ -41,12 +44,12 @@ export class EventsComponent implements OnInit {
 			});
 	}
 
-	getEventBanner(event: Event) {
+	setEventBanner(event: Event) {
 		this.eventService.getEventBanner(event.id)
 			.then(observable => {
 				const obsRef = observable.subscribe({
-					next: value => {
-						event.bannerUrl = value;
+					next: downloadUrl => {
+						event.bannerUrl = downloadUrl;
 						obsRef.unsubscribe();
 					},
 					error: () => {
@@ -54,6 +57,10 @@ export class EventsComponent implements OnInit {
 					}
 				});
 			});
+	}
+
+	deleteEvent(event: Event) {
+		this.eventService.deleteEvent(event.id);
 	}
 
 }

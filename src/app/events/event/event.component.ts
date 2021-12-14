@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { ActivatedRoute } from '@angular/router';
-import { Event } from '../model/event.model';
-import { EventService } from '../services/event.service';
+import { Event } from '../../model/event.model';
+import { EventService } from '../../services/event.service';
 
 @Component({
 	selector: 'app-event',

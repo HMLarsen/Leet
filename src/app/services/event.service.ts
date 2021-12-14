@@ -46,7 +46,31 @@ export class EventService {
 				// TODO rever esse erro do upload
 				await this.uploadEventBanner(newEventId, eventBanner)
 					.catch(() => this.deleteEvent(newEventId));
-				return newEventId;
+				return event;
+			});
+	}
+
+	async updateEvent(event: Event) {
+		const userEmail = (await this.getAuthUser())?.email!;
+
+		// delete event banner for upload
+		const eventBanner = event.banner;
+		delete event.banner;
+
+		// create the event and upload its banner
+		return this.firestore
+			.collection(this.userCollectionName)
+			.doc(userEmail)
+			.collection(this.eventCollectionName)
+			.doc(event.id)
+			.set(event)
+			.then(async () => {
+				// TODO rever esse erro do upload
+				if (eventBanner) {
+					await this.uploadEventBanner(event.id, eventBanner)
+						.catch(() => this.deleteEvent(event.id));
+				}
+				return event;
 			});
 	}
 
@@ -63,7 +87,7 @@ export class EventService {
 			.collection(this.userCollectionName)
 			.doc(userEmail)
 			.collection<Event>(this.eventCollectionName)
-			.valueChanges();
+			.get();
 	}
 
 	async getEvent(eventId: string) {
