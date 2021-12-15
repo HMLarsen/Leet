@@ -32,7 +32,7 @@
 						<div class="card-footer text-end">
 							<i class="bi-box-arrow-up-right action-icon-event" (click)="openEvent()" appTooltip
 								data-bs-toggle="tooltip" data-bs-placement="top" title="Abrir evento"></i>
-							<i class="bi-clipboard action-icon-event ms-3" appTooltip [tooltipEventShow]="newItemEvent"
+							<i class="bi-clipboard action-icon-event ms-3" appTooltip [tooltipEventShow]="tooltipEventShow"
 								[ngClass]="{ 'bi-clipboard': !eventUrlCopied, 'bi-clipboard-check': eventUrlCopied }"
 								(click)="copyEventUrl()" data-bs-toggle="tooltip" data-bs-placement="top"
 								data-bs-trigger="manual" title="URL copiada!"></i>
