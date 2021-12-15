@@ -7,6 +7,7 @@ import { AngularFireAuthGuard, redirectLoggedInTo, redirectUnauthorizedTo } from
 import { SetEventComponent } from './events/set-event/set-event.component';
 import { EventComponent } from './events/event/event.component';
 import { EventsComponent } from './events/events.component';
+import { EventPublicComponent } from './events/event-public/event-public.component';
 
 const redirectUnauthorizedToLogin = () => redirectUnauthorizedTo(['login']);
 const redirectAuthorizedToDashboard = () => redirectLoggedInTo(['dashboard']);
@@ -22,6 +23,7 @@ const routes: Routes = [
 			{ path: 'events/:id/edit', component: SetEventComponent }
 		]
 	},
+	{ path: 'events/:params', component: EventPublicComponent },
 	{ path: '**', redirectTo: '/', pathMatch: 'full' }
 ];
 

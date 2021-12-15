@@ -24,6 +24,8 @@ import { initializeApp, provideFirebaseApp } from '@angular/fire/app';
 import { SetEventComponent } from './events/set-event/set-event.component';
 import { EventComponent } from './events/event/event.component';
 import { EventsComponent } from './events/events.component';
+import { EventPublicComponent } from './events/event-public/event-public.component';
+import { TooltipDirective } from './tooltip.directive';
 
 @NgModule({
 	declarations: [
@@ -32,7 +34,9 @@ import { EventsComponent } from './events/events.component';
 		DashboardComponent,
 		SetEventComponent,
 		EventComponent,
-		EventsComponent
+		EventsComponent,
+		EventPublicComponent,
+		TooltipDirective
 	],
 	imports: [
 		BrowserModule,

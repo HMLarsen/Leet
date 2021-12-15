@@ -90,8 +90,8 @@ export class EventService {
 			.get();
 	}
 
-	async getEvent(eventId: string) {
-		const userEmail = (await this.getAuthUser())?.email!;
+	async getEvent(eventId: string, userEmail?: string) {
+		userEmail = userEmail || (await this.getAuthUser())?.email!;
 		return this.firestore
 			.collection(this.userCollectionName)
 			.doc(userEmail)
@@ -137,16 +137,9 @@ export class EventService {
 			.snapshotChanges();
 	}
 
-	activeEvent(eventId: string) {
-		return this.firestore.collection(this.eventCollectionName)
-			.doc<Event>(eventId)
-			.update({ 'active': true });
-	}
-
-	deactiveEvent(eventId: string) {
-		return this.firestore.collection(this.eventCollectionName)
-			.doc<Event>(eventId)
-			.update({ 'active': false });
+	async getEventPublicUrlParams(eventId: string) {
+		const userEmail = (await this.getAuthUser())?.email!;
+		return btoa(`${eventId}|${userEmail}`);
 	}
 
 }

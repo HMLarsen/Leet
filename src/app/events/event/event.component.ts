@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Title } from '@angular/platform-browser';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
+import { EventEmitter } from '@angular/core';
 import { Event } from '../../model/event.model';
 import { EventService } from '../../services/event.service';
 
@@ -15,9 +16,12 @@ export class EventComponent implements OnInit {
 	event!: Event;
 	downloadLogoURL!: string;
 	loadingEvent = true;
+	eventUrlCopied = false;
+	tooltipEventShow = new EventEmitter<string>();
 
 	constructor(
 		private route: ActivatedRoute,
+		private router: Router,
 		private eventService: EventService,
 		private titleService: Title
 	) { }
@@ -57,12 +61,34 @@ export class EventComponent implements OnInit {
 					obsRef.unsubscribe();
 				},
 				error: () => {
-					this.downloadLogoURL = '../../../assets/img/card-default-image.png';
 					this.loadingEvent = false;
 					obsRef.unsubscribe();
 				}
 			});
 		});
+	}
+
+	async openEvent() {
+		const urlParams = await this.eventService.getEventPublicUrlParams(this.eventId);
+		window.open('events/' + urlParams, '_blank');
+	}
+
+	async copyEventUrl() {
+		const urlParams = await this.eventService.getEventPublicUrlParams(this.eventId);
+		const currentRoute = this.router.url;
+		const newRoute = this.router.createUrlTree(['events', urlParams]).toString();
+		const url = window.location.href.replace(currentRoute, newRoute);
+
+		// copy
+		const el = document.createElement('textarea');
+		el.value = url;
+		document.body.appendChild(el);
+		el.select();
+		document.execCommand('copy');
+		document.body.removeChild(el);
+
+		this.eventUrlCopied = true;
+		this.tooltipEventShow.emit('show');
 	}
 
 }

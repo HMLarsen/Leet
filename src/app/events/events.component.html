@@ -4,8 +4,8 @@
 		<span class="visually-hidden">Loading...</span>
 	</div>
 </div>
-<div *ngIf="!loadingEvents" class="d-flex flex-wrap justify-content-center">
-	<div class="card m-2" *ngFor="let event of events">
+<div *ngIf="!loadingEvents" class="d-flex flex-wrap justify-content-center align-items-start">
+	<div class="card m-2" *ngFor="let event of events" routerLink="/dashboard/events/{{ event.id }}">
 		<div class="card-img-top">
 			<img class="img-fluid" *ngIf="event.bannerUrl" [src]="event.bannerUrl" alt="event banner">
 			<div *ngIf="!event.bannerUrl">
@@ -16,9 +16,7 @@
 		</div>
 		<div class="card-body">
 			<h5 class="card-title">{{ event.name }}</h5>
-			<p class="card-text">{{ event.description }}</p>
-			<a class="btn btn-outline-danger float-end" (click)="deleteEvent(event)">Excluir</a>
-			<a class="btn btn-outline-primary float-end" routerLink="/dashboard/events/{{ event.id }}/edit">Editar</a>
+			<p class="card-subtitle text-muted">{{ event.start.seconds * 1000 | date:'EEEE - dd/MM/yyyy HH:mm' | titlecase }}</p>
 		</div>
 	</div>
 </div>

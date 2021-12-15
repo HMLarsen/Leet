@@ -1,8 +1,8 @@
-<nav class="navbar navbar-expand-lg navbar-light bg-light navbar-expand-sm">
+<nav class="navbar navbar-dark bg-dark sticky-top navbar-expand-sm">
 	<div class="container-fluid">
-		<a class="navbar-brand">Leet</a>
+		<a class="navbar-brand mb-0 h1">Leet</a>
 		<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
-			aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+			aria-controls="navbarNav" aria-expanded="false">
 			<span class="navbar-toggler-icon"></span>
 		</button>
 		<div class="collapse navbar-collapse" id="navbarNav">
@@ -16,7 +16,10 @@
 			</ul>
 			<ul class="navbar-nav" *ngIf="auth.user | async as user">
 				<li class="nav-item">
-					<button class="btn btn-outline-dark" (click)="logout()">Logout</button>
+					<span class="navbar-text me-2">
+						{{ user.displayName }}
+					</span>
+					<button class="btn btn-outline-light" (click)="logout()">Sair</button>
 				</li>
 			</ul>
 		</div>

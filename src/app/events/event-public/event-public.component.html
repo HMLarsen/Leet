@@ -1,4 +1,4 @@
-<div class="container mb-5">
+<div class="container mt-5">
 	<div class="row justify-content-center">
 		<div class="spinner-border" role="status" *ngIf="loadingEvent">
 			<span class="visually-hidden">Loading...</span>
@@ -27,15 +27,6 @@
 									</li>
 								</ul>
 							</div>
-						</div>
-
-						<div class="card-footer text-end">
-							<i class="bi-box-arrow-up-right action-icon-event" (click)="openEvent()" appTooltip
-								data-bs-toggle="tooltip" data-bs-placement="top" title="Abrir evento"></i>
-							<i class="bi-clipboard action-icon-event ms-3" appTooltip [tooltipEventShow]="newItemEvent"
-								[ngClass]="{ 'bi-clipboard': !eventUrlCopied, 'bi-clipboard-check': eventUrlCopied }"
-								(click)="copyEventUrl()" data-bs-toggle="tooltip" data-bs-placement="top"
-								data-bs-trigger="manual" title="URL copiada!"></i>
 						</div>
 					</div>
 				</div>
