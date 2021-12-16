@@ -127,4 +127,8 @@ export class SetEventComponent implements OnInit {
 		this.eventForm.get('banner')?.setValue(event.target.files[0]);
 	}
 
+	editorChange(data: string) {
+		this.eventForm.get('description')?.setValue(data);
+	}
+
 }

@@ -26,6 +26,7 @@ import { EventComponent } from './events/event/event.component';
 import { EventsComponent } from './events/events.component';
 import { EventPublicComponent } from './events/event-public/event-public.component';
 import { TooltipDirective } from './tooltip.directive';
+import { EditorDirective } from './editor.directive';
 
 @NgModule({
 	declarations: [
@@ -36,7 +37,8 @@ import { TooltipDirective } from './tooltip.directive';
 		EventComponent,
 		EventsComponent,
 		EventPublicComponent,
-		TooltipDirective
+		TooltipDirective,
+		EditorDirective
 	],
 	imports: [
 		BrowserModule,

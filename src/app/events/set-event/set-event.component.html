@@ -31,11 +31,7 @@
 			</div>
 			<div class="mb-3">
 				<label for="description" class="form-label">Descrição</label>
-				<textarea class="form-control" id="description" formControlName="description"
-					[ngClass]="{ 'is-valid': getField('description').valid, 'is-invalid': getField('description').invalid && getField('description').touched }"></textarea>
-				<div class="invalid-feedback">
-					Obrigatório e mínimo de 5 caracteres.
-				</div>
+				<textarea appEditor id="description" class="form-control" (change)="editorChange($event)"></textarea>
 			</div>
 			<div class="mb-3">
 				<label for="start" class="form-label">Data</label>
@@ -70,7 +66,8 @@
 					<label class="form-check-label" for="active">Aceitando participações</label>
 				</div>
 				<button type="submit" class="btn btn-primary">
-					<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true" *ngIf="loading"></span>
+					<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"
+						*ngIf="loading"></span>
 					{{ loading ? (editing ? 'Atualizando' : 'Criando') : (editing ? 'Editar' : 'Criar') }}
 				</button>
 			</div>
