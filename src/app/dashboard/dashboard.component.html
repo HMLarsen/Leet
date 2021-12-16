@@ -8,7 +8,8 @@
 		<div class="collapse navbar-collapse" id="navbarNav">
 			<ul class="navbar-nav me-auto">
 				<li class="nav-item">
-					<a class="nav-link" routerLinkActive="active" routerLink="/dashboard/events">Meus eventos</a>
+					<a class="nav-link" routerLinkActive="active" routerLink="/dashboard/events"
+						[routerLinkActiveOptions]="{ exact: true }">Meus eventos</a>
 				</li>
 				<li class="nav-item">
 					<a class="nav-link" routerLinkActive="active" routerLink="/dashboard/events/create">Criar evento</a>

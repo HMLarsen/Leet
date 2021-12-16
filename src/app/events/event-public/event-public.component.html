@@ -1,4 +1,4 @@
-<div class="container mt-5">
+<div class="container mt-5 mb-5">
 	<div class="row justify-content-center">
 		<div class="spinner-border" role="status" *ngIf="loadingEvent">
 			<span class="visually-hidden">Loading...</span>
@@ -7,26 +7,16 @@
 		<div class="col-md-10 col-lg-12" *ngIf="!loadingEvent && event && downloadLogoURL">
 			<div class="card">
 				<div class="row g-0">
-					<div class="col-lg-6 d-flex">
+					<div class="d-flex">
 						<img class="img-fluid w-100" [src]="downloadLogoURL" alt="event banner">
 					</div>
-					<div class="col-lg-6">
+					<div>
 						<div class="card-body">
 							<h5 class="card-title">{{ event.name }}</h5>
-							<h6 class="card-subtitle mb-4 text-muted" *ngIf="event.start">
-								{{ event.start.seconds * 1000 | date:'EEEE - dd/MM/yyyy HH:mm' | titlecase }}
+							<h6 class="card-subtitle mb-4 text-muted" *ngIf="event.date">
+								{{ event.date.seconds * 1000 | date:'EEEE - dd/MM/yyyy HH:mm' | titlecase }}
 							</h6>
-
-							<p class="card-text mb-4">{{ event.description }}</p>
-
-							<div *ngIf="event.lineUp">
-								<h6>Line Up</h6>
-								<ul id="ul-line-up">
-									<li *ngFor="let dj of event.lineUp">
-										{{ dj }}
-									</li>
-								</ul>
-							</div>
+							<p class="card-text" [innerHtml]="event.description"></p>
 						</div>
 					</div>
 				</div>

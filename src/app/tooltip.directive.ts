@@ -9,9 +9,13 @@ declare var bootstrap: any;
 export class TooltipDirective implements OnInit {
 
 	tooltip: any;
-	@Input() tooltipEventShow!: EventEmitter<string>;
+	@Input() tooltipEventShow: EventEmitter<string>;
 
 	@HostListener('mouseleave') onMouseLeave() {
+		this.hide();
+	}
+
+	@HostListener('click') onClick() {
 		this.hide();
 	}
 

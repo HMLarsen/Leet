@@ -9,11 +9,11 @@ import { EventComponent } from './events/event/event.component';
 import { EventsComponent } from './events/events.component';
 import { EventPublicComponent } from './events/event-public/event-public.component';
 
-const redirectUnauthorizedToLogin = () => redirectUnauthorizedTo(['login']);
+const redirectUnauthorizedToLogin = () => redirectUnauthorizedTo(['']);
 const redirectAuthorizedToDashboard = () => redirectLoggedInTo(['dashboard']);
 
 const routes: Routes = [
-	{ path: 'login', component: LoginComponent, canActivate: [AngularFireAuthGuard], data: { authGuardPipe: redirectAuthorizedToDashboard } },
+	{ path: '', component: LoginComponent, canActivate: [AngularFireAuthGuard], data: { authGuardPipe: redirectAuthorizedToDashboard } },
 	{
 		path: 'dashboard', component: DashboardComponent, canActivate: [AngularFireAuthGuard], data: { authGuardPipe: redirectUnauthorizedToLogin }, children: [
 			{ path: '', redirectTo: 'events', pathMatch: 'full' },

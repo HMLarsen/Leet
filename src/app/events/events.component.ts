@@ -11,7 +11,7 @@ import { EventService } from '../services/event.service';
 export class EventsComponent implements OnInit {
 
 	loadingEvents = true;
-	events!: Event[];
+	events: Event[];
 
 	constructor(
 		private titleService: Title,

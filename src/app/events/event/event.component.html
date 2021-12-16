@@ -7,35 +7,30 @@
 		<div class="col-md-10 col-lg-12" *ngIf="!loadingEvent && event && downloadLogoURL">
 			<div class="card">
 				<div class="row g-0">
-					<div class="col-lg-6 d-flex">
+					<div class="d-flex">
 						<img class="img-fluid w-100" [src]="downloadLogoURL" alt="event banner">
 					</div>
-					<div class="col-lg-6">
+					<div>
 						<div class="card-body">
 							<h5 class="card-title">{{ event.name }}</h5>
-							<h6 class="card-subtitle mb-4 text-muted" *ngIf="event.start">
-								{{ event.start.seconds * 1000 | date:'EEEE - dd/MM/yyyy HH:mm' | titlecase }}
+							<h6 class="card-subtitle mb-4 text-muted" *ngIf="event.date">
+								{{ event.date.seconds * 1000 | date:'EEEE - dd/MM/yyyy HH:mm' | titlecase }}
 							</h6>
 
-							<p class="card-text mb-4">{{ event.description }}</p>
-
-							<div *ngIf="event.lineUp">
-								<h6>Line Up</h6>
-								<ul id="ul-line-up">
-									<li *ngFor="let dj of event.lineUp">
-										{{ dj }}
-									</li>
-								</ul>
-							</div>
+							<p class="card-text mb-4" [innerHtml]="event.description"></p>
 						</div>
 
 						<div class="card-footer text-end">
-							<i class="bi-box-arrow-up-right action-icon-event" (click)="openEvent()" appTooltip
-								data-bs-toggle="tooltip" data-bs-placement="top" title="Abrir evento"></i>
-							<i class="bi-clipboard action-icon-event ms-3" appTooltip [tooltipEventShow]="tooltipEventShow"
+							<i class="action-icon-event me-3" appTooltip [tooltipEventShow]="tooltipEventShow"
 								[ngClass]="{ 'bi-clipboard': !eventUrlCopied, 'bi-clipboard-check': eventUrlCopied }"
 								(click)="copyEventUrl()" data-bs-toggle="tooltip" data-bs-placement="top"
-								data-bs-trigger="manual" title="URL copiada!"></i>
+								data-bs-trigger="auto" title="Link do evento copiado!"></i>
+							<i class="bi-box-arrow-up-right action-icon-event me-3" (click)="openEvent()" appTooltip
+								data-bs-toggle="tooltip" data-bs-placement="top" title="Abrir evento"></i>
+							<i class="bi-pencil-square action-icon-event"
+								routerLink="/dashboard/events/{{ event.id }}/edit" appTooltip data-bs-toggle="tooltip"
+								data-bs-container="body"
+								data-bs-placement="top" title="Editar evento"></i>
 						</div>
 					</div>
 				</div>

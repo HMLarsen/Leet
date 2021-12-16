@@ -11,9 +11,9 @@ import { EventService } from 'src/app/services/event.service';
 })
 export class EventPublicComponent implements OnInit {
 
-	eventId!: string;
-	event!: Event;
-	downloadLogoURL!: string;
+	eventId: string;
+	event: Event;
+	downloadLogoURL: string;
 	loadingEvent = true;
 
 	constructor(
@@ -35,7 +35,7 @@ export class EventPublicComponent implements OnInit {
 				next: value => {
 					this.event = value.payload.data()!;
 					if (this.event) {
-						this.getEventBanner();
+						this.getEventBanner(userEmail);
 						this.titleService.setTitle(this.event.name);
 					} else {
 						this.loadingEvent = false
@@ -49,8 +49,8 @@ export class EventPublicComponent implements OnInit {
 		});
 	}
 
-	getEventBanner() {
-		this.eventService.getEventBanner(this.eventId!).then(observable => {
+	getEventBanner(userEmail: string) {
+		this.eventService.getEventBanner(this.eventId!, userEmail).then(observable => {
 			observable.subscribe({
 				next: value => {
 					this.downloadLogoURL = value;

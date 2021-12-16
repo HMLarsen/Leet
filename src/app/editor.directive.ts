@@ -7,16 +7,27 @@ declare var ClassicEditor: any;
 })
 export class EditorDirective implements OnInit {
 
-	@Output() change = new EventEmitter<any>();
+	@Input() data = undefined;
+	@Output() editorChange = new EventEmitter<string>();
+	@Output() editorReady = new EventEmitter<string>();
 
 	constructor(private el: ElementRef) { }
 
 	ngOnInit(): void {
-		ClassicEditor.create(this.el.nativeElement)
+		const config = {
+			toolbar: ['heading', '|', 'bold', 'italic', 'link', 'bulletedList', 'numberedList', '|', 'undo', 'redo']
+		};
+		ClassicEditor.create(this.el.nativeElement, config)
 			.then((editor: any) => {
-				editor.model.document.on('change:data', () => {
-					this.change.emit(editor.getData())
-				});
+				if (this.data) editor.setData(this.data);
+
+				if (this.editorReady) this.editorReady.emit(editor);
+
+				if (this.editorChange) {
+					editor.model.document.on('change:data', () => {
+						this.editorChange.emit(editor.getData());
+					});
+				}
 			});
 	}
 

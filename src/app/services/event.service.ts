@@ -20,7 +20,7 @@ export class EventService {
 		private auth: AngularFireAuth
 	) { }
 
-	async getAuthUser() {
+	getAuthUser() {
 		return this.auth.currentUser;
 	}
 
@@ -115,8 +115,8 @@ export class EventService {
 			});
 	}
 
-	async getEventBanner(eventId: string) {
-		const userEmail = (await this.getAuthUser())?.email!;
+	async getEventBanner(eventId: string, userEmail?: string) {
+		userEmail = userEmail || (await this.getAuthUser())?.email!;
 		const filePath = `${this.userCollectionName}/${userEmail}/events/${eventId}/banner`;
 		const ref = this.storage.ref(filePath);
 		return ref.getDownloadURL();

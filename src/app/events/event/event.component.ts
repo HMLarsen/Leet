@@ -12,9 +12,9 @@ import { EventService } from '../../services/event.service';
 })
 export class EventComponent implements OnInit {
 
-	eventId!: string;
-	event!: Event;
-	downloadLogoURL!: string;
+	eventId: string;
+	event: Event;
+	downloadLogoURL: string;
 	loadingEvent = true;
 	eventUrlCopied = false;
 	tooltipEventShow = new EventEmitter<string>();
