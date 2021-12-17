@@ -122,17 +122,45 @@ export class EventService {
 		return ref.getDownloadURL();
 	}
 
-	addPerson(eventId: string, person: Person) {
+	async addPerson(eventId: string, person: Person, userEmail?: string) {
+		userEmail = userEmail || (await this.getAuthUser())?.email!;
+		const newPersonId = this.firestore.createId();
+		person.id = newPersonId;
 		return this.firestore
+			.collection(this.userCollectionName)
+			.doc(userEmail)
 			.collection(this.eventCollectionName)
 			.doc(eventId)
 			.collection(this.personCollectionName)
-			.add(person);
+			.doc(newPersonId)
+			.set(person);
 	}
 
-	getPeople(eventId: string) {
-		return this.firestore.collection(this.eventCollectionName)
-			.doc<Event>(eventId)
+	async addPeople(eventId: string, people: Person[], userEmail?: string) {
+		userEmail = userEmail || (await this.getAuthUser())?.email!;
+		const ref = this.firestore
+			.collection(this.userCollectionName)
+			.doc(userEmail)
+			.collection(this.eventCollectionName)
+			.doc(eventId)
+			.collection(this.personCollectionName)
+			.ref;
+		const batch = ref.firestore.batch();
+		people.forEach(person => {
+			person.id = this.firestore.createId();
+			const newPersonRef = ref.doc(person.id);
+			batch.set(newPersonRef, person);
+		});
+		return batch.commit();
+	}
+
+	async getPeople(eventId: string) {
+		const userEmail = (await this.getAuthUser())?.email!;
+		return this.firestore
+			.collection(this.userCollectionName)
+			.doc(userEmail)
+			.collection(this.eventCollectionName)
+			.doc(eventId)
 			.collection<Person>(this.personCollectionName)
 			.snapshotChanges();
 	}

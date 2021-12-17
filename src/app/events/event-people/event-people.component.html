@@ -1,0 +1,53 @@
+<div class="text-center">
+	<div class="spinner-border" role="status" *ngIf="loadingEvent">
+		<span class="visually-hidden">Loading...</span>
+	</div>
+</div>
+<p class="text-center" *ngIf="!loadingEvent && !event">
+	<i class="bi-x-circle-fill"></i>&nbsp;&nbsp;
+	Evento indisponível ou não encontrado.
+</p>
+<div *ngIf="!loadingEvent && event">
+	<h1 class="display-6">{{ event.name }}</h1>
+	<h6 class="card-subtitle mb-4 text-muted" *ngIf="event.date">
+		{{ event.date.seconds * 1000 | date:'EEEE - dd/MM/yyyy HH:mm' | titlecase }}
+	</h6>
+	<form [formGroup]="importNamesForm" (ngSubmit)="onSubmitImportNamesForm()" class="mb-4">
+		<fieldset [disabled]="loadingForm">
+			<div class="mb-2">
+				<h5>Importar nomes para a lista</h5>
+				<textarea class="form-control" id="names" formControlName="names" rows="7"></textarea>
+			</div>
+			<button [disabled]="!importNamesForm.valid" type="submit" class="btn btn-success w-100">
+				<span *ngIf="loadingForm" class="spinner-border spinner-border-sm" role="status"
+					aria-hidden="true"></span>
+				<span *ngIf="!loadingForm">Adicionar na lista</span>
+			</button>
+		</fieldset>
+	</form>
+
+	<h5>Nomes na lista</h5>
+	<h6 class="card-subtitle mb-4 text-muted">
+		<span>{{ people.length }} pessoa(s)</span>
+	</h6>
+	<div *ngIf="people.length > 0">
+		<div id="list-options">
+			<a class="nav-link action-icon-event" (click)="copyList()">
+				<i [ngClass]="{ 'bi-clipboard': !peopleNameCopied, 'bi-clipboard-check': peopleNameCopied }"></i>
+				{{ peopleNameCopied ? 'Copiados!' : 'Copiar nomes' }}
+			</a>
+		</div>
+
+		<ol class="list-group list-group-flush mb-3 mt-3">
+			<li *ngFor="let person of people; trackBy: personListTrackBy"
+				class="list-group-item d-flex justify-content-between">
+				<span class="mr-auto person-name">
+					{{ person.name }}
+				</span>
+				<span class="person-date" class="text-muted person-date" *ngIf="person.fillDate">
+					{{ person.fillDate.toDate() | date:'dd/MM/yyyy HH:mm' }}
+				</span>
+			</li>
+		</ol>
+	</div>
+</div>

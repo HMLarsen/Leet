@@ -1,4 +1,7 @@
+import { Timestamp } from "@angular/fire/firestore";
+
 export class Person {
+	id?: string;
 	name: string;
-	date: Date
+	fillDate: Timestamp;
 }

@@ -24,4 +24,12 @@ export class UtilsService {
 			'Z';
 	}
 
+	capitalize(s: string) {
+		return s.charAt(0).toUpperCase() + s.slice(1);
+	}
+
+	copyTextToClipboard(text: string) {
+		navigator.clipboard.writeText(text);
+	}
+
 }

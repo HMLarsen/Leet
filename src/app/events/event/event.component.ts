@@ -4,6 +4,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { EventEmitter } from '@angular/core';
 import { Event } from '../../model/event.model';
 import { EventService } from '../../services/event.service';
+import { UtilsService } from 'src/app/services/utils.service';
 
 @Component({
 	selector: 'app-event',
@@ -17,13 +18,13 @@ export class EventComponent implements OnInit {
 	downloadLogoURL: string;
 	loadingEvent = true;
 	eventUrlCopied = false;
-	tooltipEventShow = new EventEmitter<string>();
 
 	constructor(
 		private route: ActivatedRoute,
 		private router: Router,
 		private eventService: EventService,
-		private titleService: Title
+		private titleService: Title,
+		private utilsService: UtilsService
 	) { }
 
 	ngOnInit(): void {
@@ -80,15 +81,10 @@ export class EventComponent implements OnInit {
 		const url = window.location.href.replace(currentRoute, newRoute);
 
 		// copy
-		const el = document.createElement('textarea');
-		el.value = url;
-		document.body.appendChild(el);
-		el.select();
-		document.execCommand('copy');
-		document.body.removeChild(el);
+		this.utilsService.copyTextToClipboard(url);
 
 		this.eventUrlCopied = true;
-		this.tooltipEventShow.emit('show');
+		setTimeout(() => this.eventUrlCopied = false, 2000);
 	}
 
 }

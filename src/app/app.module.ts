@@ -25,8 +25,8 @@ import { SetEventComponent } from './events/set-event/set-event.component';
 import { EventComponent } from './events/event/event.component';
 import { EventsComponent } from './events/events.component';
 import { EventPublicComponent } from './events/event-public/event-public.component';
-import { TooltipDirective } from './tooltip.directive';
-import { EditorDirective } from './editor.directive';
+import { EditorDirective } from './directives/editor.directive';
+import { EventPeopleComponent } from './events/event-people/event-people.component';
 
 @NgModule({
 	declarations: [
@@ -37,8 +37,8 @@ import { EditorDirective } from './editor.directive';
 		EventComponent,
 		EventsComponent,
 		EventPublicComponent,
-		TooltipDirective,
-		EditorDirective
+		EditorDirective,
+		EventPeopleComponent
 	],
 	imports: [
 		BrowserModule,

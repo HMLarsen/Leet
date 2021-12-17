@@ -17,9 +17,56 @@
 								{{ event.date.seconds * 1000 | date:'EEEE - dd/MM/yyyy HH:mm' | titlecase }}
 							</h6>
 							<p class="card-text" [innerHtml]="event.description"></p>
+							<hr>
+							<div *ngIf="event.active">
+								<h6 class="mb-3" *ngIf="!nameConfirmed">Participar</h6>
+								<form [formGroup]="inviteForm" (ngSubmit)="onSubmit()" *ngIf="!nameConfirmed">
+									<fieldset [disabled]="loadingSubmit">
+										<div class="form-group mb-2">
+											<input placeholder="Nome completo" class="form-control"
+												formControlName="personName">
+										</div>
+										<button [disabled]="!inviteForm.valid" type="submit"
+											class="btn btn-success w-100">
+											<span *ngIf="loadingSubmit" class="spinner-border spinner-border-sm"
+												role="status" aria-hidden="true"></span>
+											<span *ngIf="!loadingSubmit">Adicionar na lista</span>
+										</button>
+									</fieldset>
+								</form>
+								<div [@fadeInOut] *ngIf="nameConfirmed">
+									<span class="col-xs-12 me-3">
+										<i class="bi bi-person-check-fill"></i>
+										Participação confirmada!
+									</span>
+									<a class="nav-link add-another-person d-sm-inline" (click)="nameConfirmed = false">
+										Adicionar outra pessoa
+									</a>
+								</div>
+							</div>
+							<div *ngIf="!event.active">
+								<h6 class="mb-0">Lista para o evento encerrada !!!</h6>
+							</div>
 						</div>
 					</div>
 				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div id="errorModal" class="modal fade" tabindex="-1">
+	<div class="modal-dialog modal-dialog-centered">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title">Ocorre um erro :(</h5>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+			</div>
+			<div class="modal-body">
+				<p>Tente novamente mais tarde.</p>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">OK</button>
 			</div>
 		</div>
 	</div>

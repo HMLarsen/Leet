@@ -3,7 +3,10 @@
 		<div class="spinner-border" role="status" *ngIf="loadingEvent">
 			<span class="visually-hidden">Loading...</span>
 		</div>
-		<p class="text-center" *ngIf="!loadingEvent && !event">Evento indisponível ou não encontrado.</p>
+		<p class="text-center" *ngIf="!loadingEvent && !event">
+			<i class="bi-x-circle-fill"></i>&nbsp;&nbsp;
+			Evento indisponível ou não encontrado.
+		</p>
 		<div class="col-md-10 col-lg-12" *ngIf="!loadingEvent && event && downloadLogoURL">
 			<div class="card">
 				<div class="row g-0">
@@ -20,17 +23,37 @@
 							<p class="card-text mb-4" [innerHtml]="event.description"></p>
 						</div>
 
-						<div class="card-footer text-end">
-							<i class="action-icon-event me-3" appTooltip [tooltipEventShow]="tooltipEventShow"
-								[ngClass]="{ 'bi-clipboard': !eventUrlCopied, 'bi-clipboard-check': eventUrlCopied }"
-								(click)="copyEventUrl()" data-bs-toggle="tooltip" data-bs-placement="top"
-								data-bs-trigger="auto" title="Link do evento copiado!"></i>
-							<i class="bi-box-arrow-up-right action-icon-event me-3" (click)="openEvent()" appTooltip
-								data-bs-toggle="tooltip" data-bs-placement="top" title="Abrir evento"></i>
-							<i class="bi-pencil-square action-icon-event"
-								routerLink="/dashboard/events/{{ event.id }}/edit" appTooltip data-bs-toggle="tooltip"
-								data-bs-container="body"
-								data-bs-placement="top" title="Editar evento"></i>
+						<div class="card-footer d-flex justify-content-between flex-wrap">
+							<ul class="nav nav-pills">
+								<li class="nav-item">
+									<a class="nav-link action-icon-event"
+										routerLink="/dashboard/events/{{ event.id }}/edit">
+										<i class="bi-pencil-square"></i>
+										Editar
+									</a>
+								</li>
+								<li class="nav-item">
+									<a class="nav-link action-icon-event"
+										routerLink="/dashboard/events/{{ event.id }}/people">
+										<i class="bi-person-lines-fill"></i>
+										Lista de nomes
+									</a>
+								</li>
+							</ul>
+							<ul class="nav nav-pills">
+								<li class="nav-item">
+									<a class="nav-link action-icon-event" (click)="copyEventUrl()">
+										<i [ngClass]="{ 'bi-clipboard': !eventUrlCopied, 'bi-clipboard-check': eventUrlCopied }"></i>
+										{{ eventUrlCopied ? 'Copiado!' : 'Copiar link' }}
+									</a>
+								</li>
+								<li class="nav-item">
+									<a class="nav-link action-icon-event" (click)="openEvent()">
+										<i class="bi-box-arrow-up-right"></i>
+										Abrir evento
+									</a>
+								</li>
+							</ul>
 						</div>
 					</div>
 				</div>
