@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { Title } from '@angular/platform-browser';
+import { DomSanitizer, SafeHtml, Title } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
-import { EventEmitter } from '@angular/core';
 import { Event } from '../../model/event.model';
 import { EventService } from '../../services/event.service';
 import { UtilsService } from 'src/app/services/utils.service';
@@ -18,8 +17,10 @@ export class EventComponent implements OnInit {
 	downloadLogoURL: string;
 	loadingEvent = true;
 	eventUrlCopied = false;
+	eventDescriptionHtml: SafeHtml;
 
 	constructor(
+		private sanitizer: DomSanitizer,
 		private route: ActivatedRoute,
 		private router: Router,
 		private eventService: EventService,
@@ -38,6 +39,7 @@ export class EventComponent implements OnInit {
 				next: value => {
 					this.event = value.payload.data()!;
 					if (this.event) {
+						this.eventDescriptionHtml = this.sanitizer.bypassSecurityTrustHtml(this.event.description);
 						this.getEventBanner();
 						this.titleService.setTitle('Leet - ' + this.event.name);
 					} else {

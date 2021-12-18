@@ -1,4 +1,15 @@
-/* You can add global styles to this file, and also import other style files */
-.ck-editor__editable_inline {
-	height: 18.75rem;
+// Quill Editor
+.ql-editor.ql-classes {
+	line-height: unset;
+	overflow: unset;
+	padding: 0;
+	height: unset;
+}
+
+.ql-container {
+	height: 18.75rem !important;
+}
+
+.ql-editor[contenteditable="false"] {
+	background-color: #e9ecef;
 }

@@ -4,11 +4,11 @@
 			<span class="visually-hidden">Loading...</span>
 		</div>
 		<p class="text-center" *ngIf="!loadingEvent && !event">Evento indisponível ou não encontrado.</p>
-		<div class="col-md-10 col-lg-12" *ngIf="!loadingEvent && event && downloadLogoURL">
+		<div class="col-md-10 col-lg-12" *ngIf="!loadingEvent && event">
 			<div class="card">
 				<div class="row g-0">
-					<div class="d-flex">
-						<img class="img-fluid w-100" [src]="downloadLogoURL" alt="event banner">
+					<div class="d-flex" *ngIf="downloadLogoURL">
+						<img class="img-fluid w-100" [src]="downloadLogoURL" alt="Banner do evento">
 					</div>
 					<div>
 						<div class="card-body">
@@ -16,7 +16,7 @@
 							<h6 class="card-subtitle mb-4 text-muted" *ngIf="event.date">
 								{{ event.date.seconds * 1000 | date:'EEEE - dd/MM/yyyy HH:mm' | titlecase }}
 							</h6>
-							<p class="card-text" [innerHtml]="event.description"></p>
+							<p class="card-text ql-editor ql-classes" [innerHtml]="eventDescriptionHtml"></p>
 							<hr>
 							<div *ngIf="event.active">
 								<h6 class="mb-3" *ngIf="!nameConfirmed">Participar</h6>
@@ -45,7 +45,7 @@
 								</div>
 							</div>
 							<div *ngIf="!event.active">
-								<h6 class="mb-0">Lista para o evento encerrada !!!</h6>
+								<h6 class="mb-0">Lista para o evento encerrada!</h6>
 							</div>
 						</div>
 					</div>

@@ -35,8 +35,8 @@ export class EventService {
 		}
 
 		// delete event banner for upload
-		const eventBanner = eventCopy.banner;
-		delete eventCopy.banner;
+		const eventBannerFile = eventCopy.bannerFile;
+		delete eventCopy.bannerFile;
 
 		// create the event and upload its banner
 		const userEmail = (await this.getAuthUser())?.email!;
@@ -47,8 +47,9 @@ export class EventService {
 			.doc(eventCopy.id)
 			.set(eventCopy)
 			.then(async () => {
-				if (eventBanner) {
-					await this.uploadEventBanner(eventCopy.id, eventBanner);
+				if (eventBannerFile) {
+					// TODO se der erro aqui tem que excluir o evento
+					await this.uploadEventBanner(eventCopy.id, eventBannerFile);
 				}
 				return eventCopy;
 			});
@@ -58,7 +59,13 @@ export class EventService {
 		const userEmail = (await this.getAuthUser())?.email!;
 		const filePath = `${this.userCollectionName}/${userEmail}/events/${eventId}/banner`;
 		const ref = this.storage.ref(filePath);
-		return ref.put(file, { cacheControl: 'public,max-age=4000' });
+		const metadata = {
+			customMetadata: {
+				author: userEmail
+			},
+			cacheControl: 'public,max-age=7776000' // 90 days/3 months
+		};
+		return ref.put(file, metadata);
 	}
 
 	async getEvents() {

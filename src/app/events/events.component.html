@@ -4,15 +4,16 @@
 		<span class="visually-hidden">Loading...</span>
 	</div>
 </div>
-<div *ngIf="!loadingEvents" class="d-flex flex-wrap justify-content-center align-items-start">
+<div *ngIf="!loadingEvents" class="d-flex flex-wrap justify-content-center align-items-center">
 	<div class="card m-2" *ngFor="let event of events" routerLink="/dashboard/events/{{ event.id }}">
 		<div class="card-img-top">
-			<img class="img-fluid" *ngIf="event.bannerUrl" [src]="event.bannerUrl" alt="event banner">
-			<div *ngIf="!event.bannerUrl">
-				<div class="spinner-grow" style="width: 3rem; height: 3rem;" role="status">
+			<img class="img-fluid" *ngIf="event.bannerUrl" [src]="event.bannerUrl" alt="Banner do evento">
+			<div *ngIf="!event.bannerUrl && !event.bannerUrlError">
+				<div class="spinner-border" style="width: 3rem; height: 3rem;" role="status">
 					<span class="visually-hidden">Loading...</span>
 				</div>
 			</div>
+			<i class="bi-x banner-not-found" *ngIf="event.bannerUrlError"></i>
 		</div>
 		<div class="card-body">
 			<h5 class="card-title">{{ event.name }}</h5>

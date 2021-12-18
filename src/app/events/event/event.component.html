@@ -7,11 +7,11 @@
 			<i class="bi-x-circle-fill"></i>&nbsp;&nbsp;
 			Evento indisponível ou não encontrado.
 		</p>
-		<div class="col-md-10 col-lg-12" *ngIf="!loadingEvent && event && downloadLogoURL">
+		<div class="col-md-10 col-lg-12" *ngIf="!loadingEvent && event">
 			<div class="card">
 				<div class="row g-0">
-					<div class="d-flex">
-						<img class="img-fluid w-100" [src]="downloadLogoURL" alt="event banner">
+					<div class="d-flex" *ngIf="downloadLogoURL">
+						<img class="img-fluid w-100" [src]="downloadLogoURL" alt="Banner do evento">
 					</div>
 					<div>
 						<div class="card-body">
@@ -19,8 +19,7 @@
 							<h6 class="card-subtitle mb-4 text-muted" *ngIf="event.date">
 								{{ event.date.seconds * 1000 | date:'EEEE - dd/MM/yyyy HH:mm' | titlecase }}
 							</h6>
-
-							<p class="card-text mb-4" [innerHtml]="event.description"></p>
+							<p class="card-text mb-4 ql-editor ql-classes" [innerHtml]="eventDescriptionHtml"></p>
 						</div>
 
 						<div class="card-footer d-flex justify-content-between flex-wrap">

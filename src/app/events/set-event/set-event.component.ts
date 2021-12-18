@@ -3,6 +3,7 @@ import { Timestamp } from '@angular/fire/firestore';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
+import { ErrorService } from 'src/app/services/error.service';
 import { UtilsService } from 'src/app/services/utils.service';
 import { Event } from '../../model/event.model';
 import { EventService } from '../../services/event.service';
@@ -24,7 +25,7 @@ export class SetEventComponent implements OnInit {
 	showModalEmitter = new EventEmitter<string>();
 
 	eventForm = new FormGroup({
-		banner: new FormControl('', Validators.required),
+		bannerFile: new FormControl('', Validators.required),
 		name: new FormControl('', [Validators.required, Validators.minLength(5)]),
 		date: new FormControl(new Date().toISOString().slice(0, -8), Validators.required),
 		description: new FormControl('', Validators.required),
@@ -36,7 +37,8 @@ export class SetEventComponent implements OnInit {
 		private titleService: Title,
 		private router: Router,
 		private eventService: EventService,
-		private utilsService: UtilsService
+		private utilsService: UtilsService,
+		private errorService: ErrorService
 	) { }
 
 	ngOnInit(): void {
@@ -62,7 +64,7 @@ export class SetEventComponent implements OnInit {
 					if (event) {
 						this.editingEvent = event;
 						this.titleService.setTitle('Leet - Editar ' + event.name);
-						this.eventForm.get('banner')?.clearValidators();
+						this.eventForm.get('bannerFile')?.clearValidators();
 						this.eventForm.get('name')?.setValue(event.name);
 						this.eventForm.get('description')?.setValue(event.description);
 						this.eventForm.get('date')?.setValue(this.utilsService.toLocaleISOString(event.date?.toDate()).slice(0, -8));
@@ -83,8 +85,29 @@ export class SetEventComponent implements OnInit {
 		return this.eventForm.get(name)!;
 	}
 
-	bannerChange(event: any) {
-		this.eventForm.get('banner')?.setValue(event.target.files[0]);
+	bannerFileChange(event: any) {
+		const file: File = event.target.files[0];
+		const bannerFileControl = this.eventForm.get('bannerFile');
+		if (file) {
+			// validate type
+			const imagePattern = /image-*/;
+			if (!file.type.match(imagePattern)) {
+				invalidateFile();
+				return;
+			}
+			// validate size
+			const maximumSize = 3 * 1024 * 1024; // 3MB
+			if (file.size > maximumSize) {
+				invalidateFile();
+				return;
+			}
+			function invalidateFile() {
+				event.target.value = '';
+				bannerFileControl?.setValue(undefined);
+				bannerFileControl?.markAsTouched();
+			}
+		}
+		bannerFileControl?.setValue(file);
 	}
 
 	editorChange(data: string) {
@@ -98,21 +121,25 @@ export class SetEventComponent implements OnInit {
 	onSubmit() {
 		this.eventForm.markAllAsTouched();
 		if (this.eventForm.invalid) return;
+
+		// disable form
 		this.loading = true;
-		this.editor.isReadOnly = true;
+		this.editor.disable();
+
+		// prepare event
 		const event: Event = this.eventForm.value;
 		event.id = this.editing ? this.editingEventId : event.id;
-
 		// update date start to Timestamp
 		const dateValue = new Date(this.eventForm.get('date')?.value);
 		event.date = Timestamp.fromDate(dateValue);
 
+		// save event
 		this.eventService.setEvent(event)
 			.then(event => this.router.navigate(['/dashboard/events/' + event.id]))
 			.catch(error => {
 				this.loading = false;
-				this.editor.isReadOnly = false;
-				this.submitFormErrorMessage = error;
+				this.editor.enable();
+				this.submitFormErrorMessage = this.errorService.translateError(error);
 				this.showModalEmitter.emit();
 			});
 	}

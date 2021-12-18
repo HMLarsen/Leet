@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Title } from '@angular/platform-browser';
-import { Event } from '../model/event.model';
+import { Event, EventForShow } from '../model/event.model';
 import { EventService } from '../services/event.service';
 
 @Component({
@@ -11,7 +11,7 @@ import { EventService } from '../services/event.service';
 export class EventsComponent implements OnInit {
 
 	loadingEvents = true;
-	events: Event[];
+	events: EventForShow[];
 
 	constructor(
 		private titleService: Title,
@@ -44,7 +44,7 @@ export class EventsComponent implements OnInit {
 			});
 	}
 
-	setEventBanner(event: Event) {
+	setEventBanner(event: EventForShow) {
 		this.eventService.getEventBanner(event.id)
 			.then(observable => {
 				const obsRef = observable.subscribe({
@@ -53,6 +53,7 @@ export class EventsComponent implements OnInit {
 						obsRef.unsubscribe();
 					},
 					error: () => {
+						event.bannerUrlError = true;
 						obsRef.unsubscribe();
 					}
 				});

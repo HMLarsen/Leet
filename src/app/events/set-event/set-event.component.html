@@ -4,24 +4,24 @@
 	</div>
 </div>
 
-<div *ngIf="!loadingEvent">
+<div *ngIf="!loadingEvent" class="mb-3">
 	<h1 class="display-6 mb-4">{{ editing ? ('Editar evento ' + editingEvent.name) : 'Criar evento' }}</h1>
 	<form [formGroup]="eventForm" (ngSubmit)="onSubmit()">
 		<fieldset [disabled]="loading">
 			<div class="mb-3">
-				<label for="banner" class="form-label">Banner</label>
-				<input class="form-control" type="file" id="banner" accept="image/*" (change)="bannerChange($event)"
-					[ngClass]="{ 'is-valid': getField('banner').valid, 'is-invalid': getField('banner').invalid && getField('banner').touched }">
+				<label for="bannerFile" class="form-label">Banner</label>
+				<input class="form-control" type="file" id="bannerFile" accept="image/*" (change)="bannerFileChange($event)"
+					[ngClass]="{ 'is-valid': getField('bannerFile').valid, 'is-invalid': getField('bannerFile').invalid && getField('bannerFile').touched }">
 				<div class="invalid-feedback">
-					Obrigatório
+					O banner é obrigatório e são aceitas apenas imagens de até 3MB de tamanho
 				</div>
 				<small class="text-muted" *ngIf="editing">
 					<i class="bi-exclamation-circle"></i>
 					Deixe o banner vazio para que ele não seja atualizado
 				</small>
 			</div>
-			<div class="row mb-3">
-				<div class="col">
+			<div class="row">
+				<div class="col-12 col-sm-6 col-md-7 col-lg-8 col-xl-8 col-xxl-9 mb-3">
 					<label for="name" class="form-label">Nome</label>
 					<input type="text" class="form-control"
 						[ngClass]="{ 'is-valid': getField('name').valid, 'is-invalid': getField('name').invalid && getField('name').touched }"
@@ -30,7 +30,7 @@
 						Obrigatório e mínimo de 5 caracteres
 					</div>
 				</div>
-				<div class="col">
+				<div class="col mb-3">
 					<label for="date" class="form-label">Data</label>
 					<input type="datetime-local" id="date" class="form-control" formControlName="date"
 						[ngClass]="{ 'is-valid': getField('date').valid, 'is-invalid': getField('date').invalid && getField('date').touched }">
@@ -41,8 +41,8 @@
 			</div>
 			<div class="mb-3">
 				<label for="description" class="form-label">Descrição</label>
-				<textarea appEditor (editorChange)="editorChange($event)" (editorReady)="editorReady($event)"
-					class="form-control" [data]="getField('description')?.value"></textarea>
+				<div appEditor (editorChange)="editorChange($event)" (editorReady)="editorReady($event)"
+					[data]="getField('description')?.value"></div>
 				<div class="invalid-feedback"
 					[ngClass]="{ 'show': getField('description').invalid && getField('description').touched }">
 					Preencha a descrição

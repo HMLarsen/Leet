@@ -2,7 +2,7 @@ import { animate, style, transition, trigger } from '@angular/animations';
 import { Component, EventEmitter, OnInit } from '@angular/core';
 import { Timestamp } from '@angular/fire/firestore';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { Title } from '@angular/platform-browser';
+import { DomSanitizer, SafeHtml, Title } from '@angular/platform-browser';
 import { ActivatedRoute } from '@angular/router';
 import { Event } from 'src/app/model/event.model';
 import { Person } from 'src/app/model/person.model';
@@ -32,8 +32,10 @@ export class EventPublicComponent implements OnInit {
 	loadingSubmit: boolean;
 	nameConfirmed: boolean;
 	showModalEmitter = new EventEmitter<string>();
+	eventDescriptionHtml: SafeHtml;
 
 	constructor(
+		private sanitizer: DomSanitizer,
 		private route: ActivatedRoute,
 		private eventService: EventService,
 		private titleService: Title
@@ -56,6 +58,7 @@ export class EventPublicComponent implements OnInit {
 					next: value => {
 						this.event = value.payload.data()!;
 						if (this.event) {
+							this.eventDescriptionHtml = this.sanitizer.bypassSecurityTrustHtml(this.event.description);
 							this.getEventBanner();
 							this.titleService.setTitle(this.event.name);
 						} else {
