@@ -24,53 +24,33 @@ export class EventService {
 		return this.auth.currentUser;
 	}
 
-	async createEvent(event: Event) {
-		const userEmail = (await this.getAuthUser())?.email!;
+	async setEvent(event: Event) {
+		// copy object to prevent original object changes
+		const eventCopy: Event = Object.assign({}, event);
 
-		// id
-		const newEventId = this.firestore.createId();
-		event.id = newEventId;
+		// create new id if null
+		if (!eventCopy.id) {
+			const newEventId = this.firestore.createId();
+			eventCopy.id = newEventId;
+		}
 
 		// delete event banner for upload
-		const eventBanner = event.banner;
-		delete event.banner;
+		const eventBanner = eventCopy.banner;
+		delete eventCopy.banner;
 
 		// create the event and upload its banner
+		const userEmail = (await this.getAuthUser())?.email!;
 		return this.firestore
 			.collection(this.userCollectionName)
 			.doc(userEmail)
 			.collection(this.eventCollectionName)
-			.doc(newEventId)
-			.set(event)
+			.doc(eventCopy.id)
+			.set(eventCopy)
 			.then(async () => {
-				// TODO rever esse erro do upload
-				await this.uploadEventBanner(newEventId, eventBanner)
-					.catch(() => this.deleteEvent(newEventId));
-				return event;
-			});
-	}
-
-	async updateEvent(event: Event) {
-		const userEmail = (await this.getAuthUser())?.email!;
-
-		// delete event banner for upload
-		const eventBanner = event.banner;
-		delete event.banner;
-
-		// create the event and upload its banner
-		return this.firestore
-			.collection(this.userCollectionName)
-			.doc(userEmail)
-			.collection(this.eventCollectionName)
-			.doc(event.id)
-			.set(event)
-			.then(async () => {
-				// TODO rever esse erro do upload
 				if (eventBanner) {
-					await this.uploadEventBanner(event.id, eventBanner)
-						.catch(() => this.deleteEvent(event.id));
+					await this.uploadEventBanner(eventCopy.id, eventBanner);
 				}
-				return event;
+				return eventCopy;
 			});
 	}
 

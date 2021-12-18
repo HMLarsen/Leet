@@ -7,6 +7,8 @@ import { UtilsService } from 'src/app/services/utils.service';
 import { Event } from '../../model/event.model';
 import { EventService } from '../../services/event.service';
 
+declare var bootstrap: any;
+
 @Component({
 	selector: 'app-set-event',
 	templateUrl: './set-event.component.html',
@@ -20,6 +22,7 @@ export class SetEventComponent implements OnInit {
 	loadingEvent = true;
 	loading = false;
 	editor: any;
+	error: string;
 
 	eventForm = new FormGroup({
 		banner: new FormControl('', Validators.required),
@@ -105,10 +108,14 @@ export class SetEventComponent implements OnInit {
 		const dateValue = new Date(this.eventForm.get('date')?.value);
 		event.date = Timestamp.fromDate(dateValue);
 
-		const promise = this.editing ? this.eventService.updateEvent(event) : this.eventService.createEvent(event);
-		promise
+		this.eventService.setEvent(event)
 			.then(event => this.router.navigate(['/dashboard/events/' + event.id]))
-			.catch(error => console.error(error));
+			.catch(error => {
+				this.loading = false;
+				this.editor.isReadOnly = false;
+				this.error = error;
+				new bootstrap.Modal(document.getElementById('errorModal')).show();
+			});
 	}
 
 }

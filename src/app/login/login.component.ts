@@ -1,9 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
-import { AngularFirestore } from '@angular/fire/compat/firestore';
 import { Title } from '@angular/platform-browser';
 import { Router } from '@angular/router';
 import firebase from 'firebase/compat/app';
+import { UserAccessService } from '../services/user-access.service';
 
 declare var bootstrap: any;
 
@@ -21,7 +21,7 @@ export class LoginComponent implements OnInit {
 	constructor(
 		private titleService: Title,
 		private router: Router,
-		private afs: AngularFirestore,
+		private userAccessService: UserAccessService,
 		public auth: AngularFireAuth
 	) { }
 
@@ -31,19 +31,16 @@ export class LoginComponent implements OnInit {
 
 	login() {
 		this.auth.signInWithPopup(new firebase.auth.GoogleAuthProvider())
-			.then(response => {
+			.then(async response => {
 				const userInfo = response.additionalUserInfo;
 				const email = (<Profile>userInfo?.profile).email;
-				const emailRef = this.afs.collection('auth').doc(email);
-				const obsRef = emailRef.get().subscribe(doc => {
-					if (doc.exists) {
-						this.router.navigate(['/dashboard']);
-					} else {
-						this.auth.signOut();
-						new bootstrap.Modal(document.getElementById('noPermissionModal')).show();
-					}
-					obsRef.unsubscribe();
-				});
+				const isAllowedUser = await this.userAccessService.isAllowedUser(email);
+				if (isAllowedUser) {
+					this.router.navigate(['/dashboard']);
+				} else {
+					response.user?.delete();
+					new bootstrap.Modal(document.getElementById('noPermissionModal')).show();
+				}
 			});
 	}
 
