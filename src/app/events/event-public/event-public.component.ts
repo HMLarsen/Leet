@@ -1,5 +1,5 @@
 import { animate, style, transition, trigger } from '@angular/animations';
-import { Component, OnInit } from '@angular/core';
+import { Component, EventEmitter, OnInit } from '@angular/core';
 import { Timestamp } from '@angular/fire/firestore';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Title } from '@angular/platform-browser';
@@ -7,8 +7,6 @@ import { ActivatedRoute } from '@angular/router';
 import { Event } from 'src/app/model/event.model';
 import { Person } from 'src/app/model/person.model';
 import { EventService } from 'src/app/services/event.service';
-
-declare var bootstrap: any;
 
 @Component({
 	selector: 'app-event-public',
@@ -33,6 +31,7 @@ export class EventPublicComponent implements OnInit {
 	inviteForm: FormGroup;
 	loadingSubmit: boolean;
 	nameConfirmed: boolean;
+	showModalEmitter = new EventEmitter<string>();
 
 	constructor(
 		private route: ActivatedRoute,
@@ -95,9 +94,8 @@ export class EventPublicComponent implements OnInit {
 			.then(() => {
 				this.nameConfirmed = true;
 				this.inviteForm.reset();
-			}).catch(() => {
-				new bootstrap.Modal(document.getElementById('errorModal')).show();
 			})
+			.catch(() => this.showModalEmitter.emit())
 			.finally(() => this.loadingSubmit = false);
 	}
 

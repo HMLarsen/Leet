@@ -30,20 +30,4 @@
 	</div>
 </div>
 
-<div id="noPermissionModal" class="modal fade" tabindex="-1">
-	<div class="modal-dialog modal-dialog-centered">
-		<div class="modal-content">
-			<div class="modal-header">
-				<h5 class="modal-title">Acesso não permitido</h5>
-				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-			</div>
-			<div class="modal-body">
-				<p>Você não tem autorização para usar os recursos desta aplicação.</p>
-				<p>Entre em contato pelo e-mail <strong>hugomarcel91@gmail.com</strong> para começar a usar o Leet.</p>
-			</div>
-			<div class="modal-footer">
-				<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">OK</button>
-			</div>
-		</div>
-	</div>
-</div>
+<app-modal modalType="noUserPermission" [showModalEmitter]="showModalEmitter"></app-modal>

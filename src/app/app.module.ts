@@ -27,6 +27,7 @@ import { EventsComponent } from './events/events.component';
 import { EventPublicComponent } from './events/event-public/event-public.component';
 import { EditorDirective } from './directives/editor.directive';
 import { EventPeopleComponent } from './events/event-people/event-people.component';
+import { ModalComponent } from './modal/modal.component';
 
 @NgModule({
 	declarations: [
@@ -38,7 +39,8 @@ import { EventPeopleComponent } from './events/event-people/event-people.compone
 		EventsComponent,
 		EventPublicComponent,
 		EditorDirective,
-		EventPeopleComponent
+		EventPeopleComponent,
+		ModalComponent
 	],
 	imports: [
 		BrowserModule,

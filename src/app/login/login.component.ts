@@ -1,11 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, EventEmitter, OnInit } from '@angular/core';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { Title } from '@angular/platform-browser';
 import { Router } from '@angular/router';
 import firebase from 'firebase/compat/app';
 import { UserAccessService } from '../services/user-access.service';
-
-declare var bootstrap: any;
 
 interface Profile {
 	email: string;
@@ -17,6 +15,8 @@ interface Profile {
 	styleUrls: ['./login.component.scss']
 })
 export class LoginComponent implements OnInit {
+
+	showModalEmitter = new EventEmitter<string>();
 
 	constructor(
 		private titleService: Title,
@@ -39,7 +39,7 @@ export class LoginComponent implements OnInit {
 					this.router.navigate(['/dashboard']);
 				} else {
 					response.user?.delete();
-					new bootstrap.Modal(document.getElementById('noPermissionModal')).show();
+					this.showModalEmitter.emit();
 				}
 			});
 	}

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, EventEmitter, OnInit } from '@angular/core';
 import { Timestamp } from '@angular/fire/firestore';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Title } from '@angular/platform-browser';
@@ -6,8 +6,6 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { UtilsService } from 'src/app/services/utils.service';
 import { Event } from '../../model/event.model';
 import { EventService } from '../../services/event.service';
-
-declare var bootstrap: any;
 
 @Component({
 	selector: 'app-set-event',
@@ -22,7 +20,8 @@ export class SetEventComponent implements OnInit {
 	loadingEvent = true;
 	loading = false;
 	editor: any;
-	error: string;
+	submitFormErrorMessage: string;
+	showModalEmitter = new EventEmitter<string>();
 
 	eventForm = new FormGroup({
 		banner: new FormControl('', Validators.required),
@@ -113,8 +112,8 @@ export class SetEventComponent implements OnInit {
 			.catch(error => {
 				this.loading = false;
 				this.editor.isReadOnly = false;
-				this.error = error;
-				new bootstrap.Modal(document.getElementById('errorModal')).show();
+				this.submitFormErrorMessage = error;
+				this.showModalEmitter.emit();
 			});
 	}
 
