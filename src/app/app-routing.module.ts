@@ -6,7 +6,7 @@ import { LoginComponent } from './login/login.component';
 import { AngularFireAuthGuard, redirectLoggedInTo, redirectUnauthorizedTo } from '@angular/fire/compat/auth-guard';
 import { SetEventComponent } from './events/set-event/set-event.component';
 import { EventComponent } from './events/event/event.component';
-import { EventsComponent } from './events/events.component';
+import { MyEventsComponent } from './events/my-events.component';
 import { EventPublicComponent } from './events/event-public/event-public.component';
 import { EventPeopleComponent } from './events/event-people/event-people.component';
 
@@ -18,7 +18,7 @@ const routes: Routes = [
 	{
 		path: 'dashboard', component: DashboardComponent, canActivate: [AngularFireAuthGuard], data: { authGuardPipe: redirectUnauthorized }, children: [
 			{ path: '', redirectTo: 'events', pathMatch: 'full' },
-			{ path: 'events', component: EventsComponent },
+			{ path: 'events', component: MyEventsComponent },
 			{ path: 'events/create', component: SetEventComponent },
 			{ path: 'events/:id', component: EventComponent },
 			{ path: 'events/:id/edit', component: SetEventComponent },

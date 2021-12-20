@@ -5,13 +5,13 @@
 		</div>
 		<p class="text-center" *ngIf="!loadingEvent && !event">
 			<i class="bi-x-circle-fill"></i>&nbsp;&nbsp;
-			Evento indisponível ou não encontrado.
+			Evento indisponível ou não encontrado
 		</p>
 		<div class="col-md-10 col-lg-12" *ngIf="!loadingEvent && event">
 			<div class="card">
 				<div class="row g-0">
 					<div class="d-flex" *ngIf="downloadLogoURL">
-						<img class="img-fluid w-100" [src]="downloadLogoURL" alt="Banner do evento">
+						<img class="img-fluid w-100 rounded-top" [src]="downloadLogoURL" alt="Banner do evento">
 					</div>
 					<div>
 						<div class="card-body">
@@ -35,7 +35,7 @@
 									<a class="nav-link action-icon-event"
 										routerLink="/dashboard/events/{{ event.id }}/people">
 										<i class="bi-person-lines-fill"></i>
-										Lista de nomes
+										Lista de participantes
 									</a>
 								</li>
 							</ul>

@@ -1,14 +1,14 @@
-<div class="container mt-5 mb-5">
+<div class="container-lg mt-4 mb-4">
 	<div class="row justify-content-center">
 		<div class="spinner-border" role="status" *ngIf="loadingEvent">
 			<span class="visually-hidden">Loading...</span>
 		</div>
-		<p class="text-center" *ngIf="!loadingEvent && !event">Evento indisponível ou não encontrado.</p>
+		<p class="text-center" *ngIf="!loadingEvent && !event">Evento indisponível ou não encontrado</p>
 		<div class="col-md-10 col-lg-12" *ngIf="!loadingEvent && event">
 			<div class="card">
 				<div class="row g-0">
 					<div class="d-flex" *ngIf="downloadLogoURL">
-						<img class="img-fluid w-100" [src]="downloadLogoURL" alt="Banner do evento">
+						<img class="img-fluid w-100 rounded-top" [src]="downloadLogoURL" alt="Banner do evento">
 					</div>
 					<div>
 						<div class="card-body">

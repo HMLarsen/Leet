@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
 import { AngularFireStorage } from '@angular/fire/compat/storage';
+import { Timestamp } from '@angular/fire/firestore';
 import { Event } from '../model/event.model';
 import { Person } from '../model/person.model';
 
@@ -34,6 +35,9 @@ export class EventService {
 			eventCopy.id = newEventId;
 		}
 
+		// current timestamp
+		eventCopy.createdAt = Timestamp.now();
+
 		// delete event banner for upload
 		const eventBannerFile = eventCopy.bannerFile;
 		delete eventCopy.bannerFile;
@@ -48,8 +52,12 @@ export class EventService {
 			.set(eventCopy)
 			.then(async () => {
 				if (eventBannerFile) {
-					// TODO se der erro aqui tem que excluir o evento
-					await this.uploadEventBanner(eventCopy.id, eventBannerFile);
+					try {
+						await this.uploadEventBanner(eventCopy.id, eventBannerFile);
+					} catch (e) {
+						this.deleteEvent(eventCopy.id);
+						throw e;
+					}
 				}
 				return eventCopy;
 			});
@@ -68,13 +76,17 @@ export class EventService {
 		return ref.put(file, metadata);
 	}
 
-	async getEvents() {
+	async paginateEvents(limit: number, lastCreatedDate: Timestamp) {
 		const userEmail = (await this.getAuthUser())?.email!;
 		return this.firestore
 			.collection(this.userCollectionName)
 			.doc(userEmail)
-			.collection<Event>(this.eventCollectionName)
-			.get();
+			.collection<Event>(this.eventCollectionName, ref => (
+				ref
+					.where('createdAt', '<', lastCreatedDate)
+					.orderBy('createdAt', 'desc')
+					.limit(limit)
+			)).snapshotChanges();
 	}
 
 	async getEvent(eventId: string, userEmail?: string) {

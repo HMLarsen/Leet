@@ -1,7 +1,8 @@
-import { Timestamp } from '@firebase/firestore-types';
+import { Timestamp } from '@angular/fire/firestore';
 
 export class Event {
 	id: string;
+	createdAt: Timestamp;
 	bannerFile?: File;
 	name: string;
 	date: Timestamp;

@@ -15,6 +15,7 @@ import { EventService } from '../../services/event.service';
 })
 export class SetEventComponent implements OnInit {
 
+	eventForm: FormGroup;
 	editing = false;
 	editingEventId: string;
 	editingEvent: Event;
@@ -23,14 +24,6 @@ export class SetEventComponent implements OnInit {
 	editor: any;
 	submitFormErrorMessage: string;
 	showModalEmitter = new EventEmitter<string>();
-
-	eventForm = new FormGroup({
-		bannerFile: new FormControl('', Validators.required),
-		name: new FormControl('', [Validators.required, Validators.minLength(5)]),
-		date: new FormControl(new Date().toISOString().slice(0, -8), Validators.required),
-		description: new FormControl('', Validators.required),
-		active: new FormControl(true, Validators.required)
-	});
 
 	constructor(
 		private route: ActivatedRoute,
@@ -43,6 +36,14 @@ export class SetEventComponent implements OnInit {
 
 	ngOnInit(): void {
 		this.titleService.setTitle('Leet - Criar evento');
+
+		this.eventForm = new FormGroup({
+			bannerFile: new FormControl('', Validators.required),
+			name: new FormControl('', [Validators.required, Validators.minLength(5)]),
+			date: new FormControl(this.utilsService.toLocaleISOString(new Date()).slice(0, -8), Validators.required),
+			description: new FormControl('', Validators.required),
+			active: new FormControl(true, Validators.required)
+		});
 
 		// editing?
 		this.editingEventId = this.route.snapshot.paramMap.get('id')!;

@@ -23,11 +23,13 @@ import { DashboardComponent } from './dashboard/dashboard.component';
 import { initializeApp, provideFirebaseApp } from '@angular/fire/app';
 import { SetEventComponent } from './events/set-event/set-event.component';
 import { EventComponent } from './events/event/event.component';
-import { EventsComponent } from './events/events.component';
+import { MyEventsComponent } from './events/my-events.component';
 import { EventPublicComponent } from './events/event-public/event-public.component';
 import { EditorDirective } from './directives/editor.directive';
 import { EventPeopleComponent } from './events/event-people/event-people.component';
 import { ModalComponent } from './modal/modal.component';
+import { EventsPaginationComponent } from './events-pagination/events-pagination.component';
+import { InfiniteScrollModule } from 'ngx-infinite-scroll';
 
 @NgModule({
 	declarations: [
@@ -36,11 +38,12 @@ import { ModalComponent } from './modal/modal.component';
 		DashboardComponent,
 		SetEventComponent,
 		EventComponent,
-		EventsComponent,
+		MyEventsComponent,
 		EventPublicComponent,
 		EditorDirective,
 		EventPeopleComponent,
-		ModalComponent
+		ModalComponent,
+		EventsPaginationComponent
 	],
 	imports: [
 		BrowserModule,
@@ -51,7 +54,8 @@ import { ModalComponent } from './modal/modal.component';
 		provideFirebaseApp(() => initializeApp(firebaseConfig)),
 		provideFirestore(() => getFirestore()),
 		provideAuth(() => getAuth()),
-		AngularFireStorageModule
+		AngularFireStorageModule,
+		InfiniteScrollModule
 	],
 	providers: [
 		{ provide: LOCALE_ID, useValue: 'pt-BR' }
