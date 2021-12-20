@@ -19,14 +19,12 @@ export class LoginComponent implements OnInit {
 	showModalEmitter = new EventEmitter<string>();
 
 	constructor(
-		private titleService: Title,
 		private router: Router,
 		private userAccessService: UserAccessService,
 		public auth: AngularFireAuth
 	) { }
 
 	ngOnInit(): void {
-		this.titleService.setTitle('Leet - Login');
 	}
 
 	login() {
