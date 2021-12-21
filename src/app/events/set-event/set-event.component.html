@@ -5,6 +5,10 @@
 </div>
 
 <div *ngIf="!loadingEvent" class="mb-3">
+	<div class="action-icon-event mb-3" routerLink="/dashboard/events/{{ editingEvent.id }}" *ngIf="editing">
+		<i class="bi-chevron-left"></i>&nbsp;
+		Voltar ao evento
+	</div>
 	<h1 class="display-6 mb-4">{{ editing ? ('Editar evento ' + editingEvent.name) : 'Criar evento' }}</h1>
 	<form [formGroup]="eventForm" (ngSubmit)="onSubmit()">
 		<fieldset [disabled]="loading">
@@ -17,7 +21,7 @@
 				</div>
 				<small class="text-muted" *ngIf="editing">
 					<i class="bi-exclamation-circle"></i>
-					Deixe o banner vazio para que ele não seja atualizado
+					Deixe o banner vazio para que ele não seja alterado
 				</small>
 			</div>
 			<div class="row">
@@ -50,13 +54,13 @@
 			</div>
 			<div class="d-flex align-items-center justify-content-end">
 				<div class="form-check form-switch me-3">
-					<input class="form-check-input" type="checkbox" role="switch" id="active" formControlName="active">
-					<label class="form-check-label" for="active">Aceitando participações</label>
+					<input class="form-check-input" type="checkbox" role="switch" id="acceptingParticipations" formControlName="acceptingParticipations">
+					<label class="form-check-label" for="acceptingParticipations">Aceitando participações</label>
 				</div>
 				<button type="submit" class="btn btn-primary">
 					<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"
 						*ngIf="loading"></span>
-					{{ loading ? (editing ? 'Atualizando' : 'Criando') : (editing ? 'Editar' : 'Criar') }}
+					{{ loading ? (editing ? 'Editando' : 'Criando') : (editing ? 'Editar' : 'Criar') }}
 				</button>
 			</div>
 		</fieldset>

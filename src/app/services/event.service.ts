@@ -5,6 +5,7 @@ import { AngularFireStorage } from '@angular/fire/compat/storage';
 import { Timestamp } from '@angular/fire/firestore';
 import { Event } from '../model/event.model';
 import { Person } from '../model/person.model';
+import { firstValueFrom } from 'rxjs';
 
 @Injectable({
 	providedIn: 'root'
@@ -101,17 +102,54 @@ export class EventService {
 
 	async deleteEvent(eventId: string) {
 		const userEmail = (await this.getAuthUser())?.email!;
+
+		// delete people from event before
+		await this.deleteEventPeople(eventId);
+
+		// delete event
 		return this.firestore
 			.collection(this.userCollectionName)
 			.doc(userEmail)
 			.collection(this.eventCollectionName)
 			.doc(eventId)
 			.delete()
-			.then(() => {
+			.then(async () => {
+				// delete banner
 				const filePath = `${this.userCollectionName}/${userEmail}/events/${eventId}/banner`;
 				const ref = this.storage.ref(filePath);
-				return ref.delete();
+				await firstValueFrom(ref.delete());
 			});
+	}
+
+	async deleteEventPeople(eventId: string) {
+		const userEmail = (await this.getAuthUser())?.email!;
+		const collectionRef = this.firestore
+			.collection(this.userCollectionName)
+			.doc(userEmail)
+			.collection(this.eventCollectionName)
+			.doc(eventId)
+			.collection(this.personCollectionName)
+			.ref;
+		await this.deleteCollectionQueryBatch(collectionRef);
+	}
+
+	async deleteCollectionQueryBatch(collectionRef: any) {
+		const batchLimit = 20;
+		const snapshot = await collectionRef.limit(batchLimit).get();
+
+		const batchSize = snapshot.size;
+		if (batchSize === 0) {
+			// When there are no documents left, we are done
+			return;
+		}
+
+		// Delete documents in a batch
+		const batch = collectionRef.firestore.batch();
+		snapshot.docs.forEach((doc: any) => {
+			batch.delete(doc.ref);
+		});
+		await batch.commit();
+		await this.deleteCollectionQueryBatch(collectionRef);
 	}
 
 	async getEventBanner(eventId: string, userEmail?: string) {

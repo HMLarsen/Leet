@@ -25,6 +25,12 @@
 						<div class="card-footer d-flex justify-content-between flex-wrap">
 							<ul class="nav nav-pills">
 								<li class="nav-item">
+									<a class="nav-link action-icon-event" (click)="deleteEvent()">
+										<i class="bi-x-octagon"></i>
+										Excluir
+									</a>
+								</li>
+								<li class="nav-item">
 									<a class="nav-link action-icon-event"
 										routerLink="/dashboard/events/{{ event.id }}/edit">
 										<i class="bi-pencil-square"></i>
@@ -57,6 +63,11 @@
 					</div>
 				</div>
 			</div>
+
+			<app-modal modalType="deleteConfirmation" [showModalEmitter]="showModalEmitter"
+				[closeModalEmitter]="closeModalEmitter" [title]="'Excluir evento ' + event.name"
+				detailMessage="Tem certeza que deseja excluir este evento?" [errorMessage]="deleteEventErrorMessage" [loading]="loadingDeleteEvent"
+				[showErrorModalEmitter]="showErrorModalEmitter" (confirm)="confirmDeleteEvent()"></app-modal>
 		</div>
 	</div>
 </div>

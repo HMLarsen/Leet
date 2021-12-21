@@ -42,7 +42,7 @@ export class SetEventComponent implements OnInit {
 			name: new FormControl('', [Validators.required, Validators.minLength(5)]),
 			date: new FormControl(this.utilsService.toLocaleISOString(new Date()).slice(0, -8), Validators.required),
 			description: new FormControl('', Validators.required),
-			active: new FormControl(true, Validators.required)
+			acceptingParticipations: new FormControl(true, Validators.required)
 		});
 
 		// editing?
@@ -69,7 +69,7 @@ export class SetEventComponent implements OnInit {
 						this.eventForm.get('name')?.setValue(event.name);
 						this.eventForm.get('description')?.setValue(event.description);
 						this.eventForm.get('date')?.setValue(this.utilsService.toLocaleISOString(event.date?.toDate()).slice(0, -8));
-						this.eventForm.get('active')?.setValue(event.active);
+						this.eventForm.get('acceptingParticipations')?.setValue(event.acceptingParticipations);
 					}
 					this.loadingEvent = false;
 					obsRef.unsubscribe();

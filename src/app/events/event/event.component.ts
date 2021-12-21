@@ -1,9 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, EventEmitter, OnInit } from '@angular/core';
 import { DomSanitizer, SafeHtml, Title } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Event } from '../../model/event.model';
 import { EventService } from '../../services/event.service';
 import { UtilsService } from 'src/app/services/utils.service';
+import { ErrorService } from 'src/app/services/error.service';
 
 @Component({
 	selector: 'app-event',
@@ -19,13 +20,21 @@ export class EventComponent implements OnInit {
 	eventUrlCopied = false;
 	eventDescriptionHtml: SafeHtml;
 
+	showModalEmitter = new EventEmitter();
+	closeModalEmitter = new EventEmitter();
+	loadingDeleteEvent = false;
+	showErrorModalEmitter = new EventEmitter();
+	deleteEventErrorMessage: string;
+
 	constructor(
 		private sanitizer: DomSanitizer,
 		private route: ActivatedRoute,
 		private router: Router,
 		private eventService: EventService,
 		private titleService: Title,
-		private utilsService: UtilsService
+		private utilsService: UtilsService,
+		private changeDetectorRef: ChangeDetectorRef,
+		private errorService: ErrorService
 	) { }
 
 	ngOnInit(): void {
@@ -69,6 +78,29 @@ export class EventComponent implements OnInit {
 				}
 			});
 		});
+	}
+
+	deleteEvent() {
+		this.showModalEmitter.emit();
+	}
+
+	confirmDeleteEvent() {
+		this.loadingDeleteEvent = true;
+		this.eventService.deleteEvent(this.eventId)
+			.then(() => {
+				this.loadingDeleteEvent = false;
+				this.changeDetectorRef.detectChanges();
+				this.closeModalEmitter.emit();
+				this.router.navigate(['/dashboard/events']);
+			})
+			.catch(error => {
+				console.error(error);
+				this.loadingDeleteEvent = false;
+				this.deleteEventErrorMessage = this.errorService.translateError(error);
+				this.changeDetectorRef.detectChanges();
+				this.closeModalEmitter.emit();
+				this.showErrorModalEmitter.emit();
+			});
 	}
 
 	async openEvent() {

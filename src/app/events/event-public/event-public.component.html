@@ -3,7 +3,10 @@
 		<div class="spinner-border" role="status" *ngIf="loadingEvent">
 			<span class="visually-hidden">Loading...</span>
 		</div>
-		<p class="text-center" *ngIf="!loadingEvent && !event">Evento indisponível ou não encontrado</p>
+		<p class="text-center" *ngIf="!loadingEvent && !event">
+			<i class="bi-x-circle-fill"></i>&nbsp;&nbsp;
+			Evento indisponível ou não encontrado
+		</p>
 		<div class="col-md-10 col-lg-12" *ngIf="!loadingEvent && event">
 			<div class="card">
 				<div class="row g-0">
@@ -18,7 +21,7 @@
 							</h6>
 							<p class="card-text ql-editor ql-classes" [innerHtml]="eventDescriptionHtml"></p>
 							<hr>
-							<div *ngIf="event.active">
+							<div *ngIf="event.acceptingParticipations">
 								<h6 class="mb-3" *ngIf="!nameConfirmed">Participar</h6>
 								<form [formGroup]="inviteForm" (ngSubmit)="onSubmit()" *ngIf="!nameConfirmed">
 									<fieldset [disabled]="loadingSubmit">
@@ -44,7 +47,7 @@
 									</a>
 								</div>
 							</div>
-							<div *ngIf="!event.active">
+							<div *ngIf="!event.acceptingParticipations">
 								<h6 class="mb-0">Lista para o evento encerrada!</h6>
 							</div>
 						</div>

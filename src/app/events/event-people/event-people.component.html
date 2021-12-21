@@ -8,6 +8,10 @@
 	Evento indisponível ou não encontrado
 </p>
 <div *ngIf="!loadingEvent && event">
+	<div class="action-icon-event mb-3 d-block" routerLink="/dashboard/events/{{ event.id }}">
+		<i class="bi-chevron-left"></i>&nbsp;
+		Voltar ao evento
+	</div>
 	<h1 class="display-6">{{ event.name }}</h1>
 	<h6 class="card-subtitle mb-4 text-muted" *ngIf="event.date">
 		{{ event.date.seconds * 1000 | date:'EEEE - dd/MM/yyyy HH:mm' | titlecase }}
