@@ -38,6 +38,7 @@ export class SetEventComponent implements OnInit {
 		this.titleService.setTitle('Leet - Criar evento');
 
 		this.eventForm = new FormGroup({
+			createdAt: new FormControl(''),
 			bannerFile: new FormControl('', Validators.required),
 			name: new FormControl('', [Validators.required, Validators.minLength(5)]),
 			date: new FormControl(this.utilsService.toLocaleISOString(new Date()).slice(0, -8), Validators.required),
@@ -65,6 +66,7 @@ export class SetEventComponent implements OnInit {
 					if (event) {
 						this.editingEvent = event;
 						this.titleService.setTitle('Leet - Editar ' + event.name);
+						this.eventForm.get('createdAt')?.setValue(event.createdAt);
 						this.eventForm.get('bannerFile')?.clearValidators();
 						this.eventForm.get('name')?.setValue(event.name);
 						this.eventForm.get('description')?.setValue(event.description);
