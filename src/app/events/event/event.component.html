@@ -1,73 +1,76 @@
-<div class="container mb-5">
-	<div class="row justify-content-center">
-		<div class="spinner-border" role="status" *ngIf="loadingEvent">
-			<span class="visually-hidden">Loading...</span>
-		</div>
-		<p class="text-center" *ngIf="!loadingEvent && !event">
-			<i class="bi-x-circle-fill"></i>&nbsp;&nbsp;
-			Evento indisponível ou não encontrado
-		</p>
-		<div class="col-md-10 col-lg-12" *ngIf="!loadingEvent && event">
-			<div class="card">
-				<div class="row g-0">
-					<div class="d-flex" *ngIf="downloadLogoURL">
-						<img class="img-fluid w-100 rounded-top" [src]="downloadLogoURL" alt="Banner do evento">
+<div class="row justify-content-center">
+	<div class="action-icon-event mb-3" routerLink="/dashboard/events">
+		<i class="bi-chevron-left"></i>&nbsp;
+		Voltar para os meus eventos
+	</div>
+	<div class="spinner-border" role="status" *ngIf="loadingEvent">
+		<span class="visually-hidden">Loading...</span>
+	</div>
+	<p class="text-center" *ngIf="!loadingEvent && !event">
+		<i class="bi-x-circle-fill"></i>&nbsp;&nbsp;
+		Evento indisponível ou não encontrado
+	</p>
+	<div class="col-md-10 col-lg-12" *ngIf="!loadingEvent && event">
+		<div class="card">
+			<div class="row g-0">
+				<div class="d-flex" *ngIf="downloadLogoURL">
+					<img class="img-fluid w-100 rounded-top" [src]="downloadLogoURL" alt="Banner do evento">
+				</div>
+				<div>
+					<div class="card-body">
+						<h5 class="card-title">{{ event.name }}</h5>
+						<h6 class="card-subtitle mb-4 text-muted" *ngIf="event.date">
+							{{ event.date.seconds * 1000 | date:'EEEE - dd/MM/yyyy HH:mm' | titlecase }}
+						</h6>
+						<p class="card-text mb-4 ql-editor ql-classes" [innerHtml]="eventDescriptionHtml"></p>
 					</div>
-					<div>
-						<div class="card-body">
-							<h5 class="card-title">{{ event.name }}</h5>
-							<h6 class="card-subtitle mb-4 text-muted" *ngIf="event.date">
-								{{ event.date.seconds * 1000 | date:'EEEE - dd/MM/yyyy HH:mm' | titlecase }}
-							</h6>
-							<p class="card-text mb-4 ql-editor ql-classes" [innerHtml]="eventDescriptionHtml"></p>
-						</div>
 
-						<div class="card-footer d-flex justify-content-between flex-wrap">
-							<ul class="nav nav-pills">
-								<li class="nav-item">
-									<a class="nav-link action-icon-event" (click)="deleteEvent()">
-										<i class="bi-x-octagon"></i>
-										Excluir
-									</a>
-								</li>
-								<li class="nav-item">
-									<a class="nav-link action-icon-event"
-										routerLink="/dashboard/events/{{ event.id }}/edit">
-										<i class="bi-pencil-square"></i>
-										Editar
-									</a>
-								</li>
-								<li class="nav-item">
-									<a class="nav-link action-icon-event"
-										routerLink="/dashboard/events/{{ event.id }}/people">
-										<i class="bi-person-lines-fill"></i>
-										Participantes
-									</a>
-								</li>
-							</ul>
-							<ul class="nav nav-pills">
-								<li class="nav-item">
-									<a class="nav-link action-icon-event" (click)="copyEventUrl()">
-										<i [ngClass]="{ 'bi-clipboard': !eventUrlCopied, 'bi-clipboard-check': eventUrlCopied }"></i>
-										{{ eventUrlCopied ? 'Copiado!' : 'Copiar link' }}
-									</a>
-								</li>
-								<li class="nav-item">
-									<a class="nav-link action-icon-event pe-0" (click)="openEvent()">
-										<i class="bi-box-arrow-up-right"></i>
-										Abrir evento
-									</a>
-								</li>
-							</ul>
-						</div>
+					<div class="card-footer d-flex justify-content-between flex-wrap">
+						<ul class="nav nav-pills">
+							<li class="nav-item">
+								<a class="nav-link action-icon-event" (click)="deleteEvent()">
+									<i class="bi-x-octagon"></i>
+									Excluir
+								</a>
+							</li>
+							<li class="nav-item">
+								<a class="nav-link action-icon-event"
+									routerLink="/dashboard/events/{{ event.id }}/edit">
+									<i class="bi-pencil-square"></i>
+									Editar
+								</a>
+							</li>
+							<li class="nav-item">
+								<a class="nav-link action-icon-event"
+									routerLink="/dashboard/events/{{ event.id }}/people">
+									<i class="bi-person-lines-fill"></i>
+									Participantes
+								</a>
+							</li>
+						</ul>
+						<ul class="nav nav-pills">
+							<li class="nav-item">
+								<a class="nav-link action-icon-event" (click)="copyEventUrl()">
+									<i [ngClass]="{ 'bi-clipboard': !eventUrlCopied, 'bi-clipboard-check': eventUrlCopied }"></i>
+									{{ eventUrlCopied ? 'Copiado!' : 'Copiar link' }}
+								</a>
+							</li>
+							<li class="nav-item">
+								<a class="nav-link action-icon-event pe-0" (click)="openEvent()">
+									<i class="bi-box-arrow-up-right"></i>
+									Abrir evento
+								</a>
+							</li>
+						</ul>
 					</div>
 				</div>
 			</div>
-
-			<app-modal modalType="deleteConfirmation" [showModalEmitter]="showModalEmitter"
-				[closeModalEmitter]="closeModalEmitter" [title]="'Excluir evento ' + event.name"
-				detailMessage="Tem certeza que deseja excluir este evento?" [errorMessage]="deleteEventErrorMessage" [loading]="loadingDeleteEvent"
-				[showErrorModalEmitter]="showErrorModalEmitter" (confirm)="confirmDeleteEvent()"></app-modal>
 		</div>
+
+		<app-modal modalType="deleteConfirmation" [showModalEmitter]="showModalEmitter"
+			[closeModalEmitter]="closeModalEmitter" [title]="'Excluir evento ' + event.name"
+			detailMessage="Tem certeza que deseja excluir este evento?" [errorMessage]="deleteEventErrorMessage"
+			[loading]="loadingDeleteEvent" [showErrorModalEmitter]="showErrorModalEmitter"
+			(confirm)="confirmDeleteEvent()"></app-modal>
 	</div>
 </div>
