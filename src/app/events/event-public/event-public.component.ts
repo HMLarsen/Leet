@@ -59,7 +59,7 @@ export class EventPublicComponent implements OnInit {
 						this.event = value.payload.data()!;
 						if (this.event) {
 							this.eventDescriptionHtml = this.sanitizer.bypassSecurityTrustHtml(this.event.description);
-							this.getEventBanner();
+							this.setEventBanner();
 							this.titleService.setTitle(this.event.name);
 						} else {
 							this.loadingEvent = false
@@ -73,17 +73,10 @@ export class EventPublicComponent implements OnInit {
 			});
 	}
 
-	getEventBanner() {
+	setEventBanner() {
 		this.eventService.getEventBanner(this.eventId!, this.eventUserEmail)
-			.then(observable => {
-				observable.subscribe({
-					next: value => {
-						this.downloadLogoURL = value;
-						this.loadingEvent = false;
-					},
-					error: () => this.loadingEvent = false
-				});
-			});
+			.then(downloadUrl => this.downloadLogoURL = downloadUrl)
+			.finally(() => this.loadingEvent = false);
 	}
 
 	onSubmit() {

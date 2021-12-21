@@ -65,19 +65,12 @@ export class EventComponent implements OnInit {
 	}
 
 	getEventBanner() {
-		this.eventService.getEventBanner(this.eventId!).then(observable => {
-			const obsRef = observable.subscribe({
-				next: value => {
-					this.downloadLogoURL = value;
-					this.loadingEvent = false;
-					obsRef.unsubscribe();
-				},
-				error: () => {
-					this.loadingEvent = false;
-					obsRef.unsubscribe();
-				}
-			});
-		});
+		this.eventService.getEventBanner(this.eventId!)
+			.then(downloadUrl => {
+				this.downloadLogoURL = downloadUrl;
+				this.loadingEvent = false;
+			})
+			.finally(() => this.loadingEvent = false);
 	}
 
 	deleteEvent() {

@@ -77,15 +77,17 @@ export class EventService {
 
 	async paginateEvents(limit: number, lastCreatedDate: Timestamp) {
 		const userEmail = (await this.getAuthUser())?.email!;
-		return this.firestore
-			.collection(this.userCollectionName)
-			.doc(userEmail)
-			.collection<Event>(this.eventCollectionName, ref => (
-				ref
-					.where('createdAt', '<', lastCreatedDate)
-					.orderBy('createdAt', 'desc')
-					.limit(limit)
-			)).snapshotChanges();
+		return firstValueFrom(
+			this.firestore
+				.collection(this.userCollectionName)
+				.doc(userEmail)
+				.collection<Event>(this.eventCollectionName, ref => (
+					ref
+						.where('createdAt', '<', lastCreatedDate)
+						.orderBy('createdAt', 'desc')
+						.limit(limit)
+				)).get()
+		);
 	}
 
 	async getEvent(eventId: string, userEmail?: string) {
@@ -154,7 +156,7 @@ export class EventService {
 		userEmail = userEmail || (await this.getAuthUser())?.email!;
 		const filePath = `${this.userCollectionName}/${userEmail}/events/${eventId}/banner`;
 		const ref = this.storage.ref(filePath);
-		return ref.getDownloadURL();
+		return firstValueFrom(ref.getDownloadURL());
 	}
 
 	async addPerson(eventId: string, person: Person, userEmail?: string) {

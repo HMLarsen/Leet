@@ -29,43 +29,29 @@ export class EventsPaginationComponent implements OnInit {
 		this.loading = true;
 		this.disabledInfiniteScroll = true;
 		this.eventService.paginateEvents(this.batch, this.lastCreatedDate)
-			.then(obs => {
-				const obsRef = obs.pipe(
-					map(data => {
-						if (!data.length) {
-							this.empty = true;
-						}
-						const lastItem = data[data.length - 1];
-						if (lastItem) {
-							this.lastCreatedDate = lastItem.payload.doc.data().createdAt;
-							data.map(eventSnap => {
-								const event = eventSnap.payload.doc.data();
-								this.events.push(event);
-								this.setEventBanner(event);
-							});
-						}
-						this.loading = false;
-						this.disabledInfiniteScroll = false;
-						obsRef.unsubscribe();
-					})
-				).subscribe();
+			.then(data => {
+				const events = data.docs;
+				if (!events.length) {
+					this.empty = true;
+				}
+				const lastItem = events[events.length - 1];
+				if (lastItem) {
+					this.lastCreatedDate = lastItem.data().createdAt;
+					data.forEach(eventSnap => {
+						const event = eventSnap.data();
+						this.events.push(event);
+						this.setEventBanner(event);
+					});
+				}
+				this.loading = false;
+				this.disabledInfiniteScroll = false;
 			});
 	}
 
 	setEventBanner(event: EventForShow) {
 		this.eventService.getEventBanner(event.id)
-			.then(observable => {
-				const obsRef = observable.subscribe({
-					next: downloadUrl => {
-						event.bannerUrl = downloadUrl;
-						obsRef.unsubscribe();
-					},
-					error: () => {
-						event.bannerUrlError = true;
-						obsRef.unsubscribe();
-					}
-				});
-			});
+			.then(downloadUrl => event.bannerUrl = downloadUrl)
+			.catch(() => event.bannerUrlError = true);
 	}
 
 	onScroll() {
