@@ -34,10 +34,8 @@ export class EventService {
 		if (!eventCopy.id) {
 			const newEventId = this.firestore.createId();
 			eventCopy.id = newEventId;
+			eventCopy.createdAt = Timestamp.now();
 		}
-
-		// current timestamp
-		eventCopy.createdAt = Timestamp.now();
 
 		// delete event banner for upload
 		const eventBannerFile = eventCopy.bannerFile;
