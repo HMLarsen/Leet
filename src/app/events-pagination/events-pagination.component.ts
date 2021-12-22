@@ -2,11 +2,13 @@ import { Component, OnInit } from '@angular/core';
 import { EventService } from '../services/event.service';
 import { Timestamp } from '@angular/fire/firestore';
 import { EventForShow } from '../model/event.model';
+import { fadeInOut, inOutAnimation } from '../animations';
 
 @Component({
 	selector: 'app-events-pagination',
 	templateUrl: './events-pagination.component.html',
-	styleUrls: ['./events-pagination.component.scss']
+	styleUrls: ['./events-pagination.component.scss'],
+	animations: [inOutAnimation, fadeInOut]
 })
 export class EventsPaginationComponent implements OnInit {
 

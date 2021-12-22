@@ -82,6 +82,8 @@ export class EventComponent implements OnInit, OnDestroy {
 
 	confirmDeleteEvent() {
 		this.loadingDeleteEvent = true;
+		// remove the subscription to not update the view
+		if (this.eventSubscription) this.eventSubscription.unsubscribe();
 		this.eventService.deleteEvent(this.eventId)
 			.then(() => {
 				this.loadingDeleteEvent = false;
@@ -90,6 +92,7 @@ export class EventComponent implements OnInit, OnDestroy {
 				this.router.navigate(['/dashboard/events']);
 			})
 			.catch(error => {
+				this.getEvent(); // return the subscription if error
 				this.loadingDeleteEvent = false;
 				this.deleteEventErrorMessage = this.errorService.translateError(error);
 				this.changeDetectorRef.detectChanges();

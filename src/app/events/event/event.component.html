@@ -64,15 +64,15 @@
 				</div>
 			</div>
 		</div>
-
-		<app-modal modalType="deleteConfirmation"
-			[showModalEmitter]="showModalEmitter"
-			[closeModalEmitter]="closeModalEmitter"
-			[title]="'Excluir evento ' + event.name"
-			detailMessage="Tem certeza que deseja excluir este evento?"
-			[errorMessage]="deleteEventErrorMessage"
-			[loading]="loadingDeleteEvent"
-			[showErrorModalEmitter]="showErrorModalEmitter"
-			(confirm)="confirmDeleteEvent()"></app-modal>
 	</div>
 </div>
+
+<app-modal modalType="deleteConfirmation"
+	[showModalEmitter]="showModalEmitter"
+	[closeModalEmitter]="closeModalEmitter"
+	[title]="'Excluir evento ' + event?.name"
+	detailMessage="Tem certeza que deseja excluir este evento?"
+	[errorMessage]="deleteEventErrorMessage"
+	[loading]="loadingDeleteEvent"
+	[showErrorModalEmitter]="showErrorModalEmitter"
+	(confirm)="confirmDeleteEvent()"></app-modal>

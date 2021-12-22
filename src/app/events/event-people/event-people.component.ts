@@ -10,13 +10,13 @@ import { EventService } from 'src/app/services/event.service';
 import { UtilsService } from 'src/app/services/utils.service';
 import { firstValueFrom } from 'rxjs';
 import { ErrorService } from 'src/app/services/error.service';
-import { fadeInOut } from 'src/app/animations';
+import { fadeInOut, inOutAnimation } from 'src/app/animations';
 
 @Component({
 	selector: 'app-event-people',
 	templateUrl: './event-people.component.html',
 	styleUrls: ['./event-people.component.scss'],
-	animations: [fadeInOut]
+	animations: [fadeInOut, inOutAnimation]
 })
 export class EventPeopleComponent implements OnInit, OnDestroy {
 

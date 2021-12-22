@@ -29,11 +29,11 @@
 		</fieldset>
 	</form>
 
-	<h5>Nomes na lista</h5>
-	<h6 class="card-subtitle mb-4 text-muted">
-		<span>{{ (people | async)?.length }} pessoa(s)</span>
-	</h6>
-	<div *ngIf="(people | async)?.length">
+	<div *ngIf="(people | async)?.length" [@fadeInOut]>
+		<h5>Participantes</h5>
+		<h6 class="card-subtitle mb-4 text-muted">
+			<span>{{ (people | async)?.length }} pessoa(s)</span>
+		</h6>
 		<div id="list-options">
 			<a class="nav-link action-icon-event" (click)="copyList()">
 				<i [ngClass]="{ 'bi-clipboard': !peopleNameCopied, 'bi-clipboard-check': peopleNameCopied }"></i>
@@ -42,7 +42,7 @@
 		</div>
 
 		<ol class="list-group list-group-flush mb-3 mt-3">
-			<li *ngFor="let person of people | async; trackBy: personListTrackBy" class="list-group-item d-flex justify-content-between">
+			<li *ngFor="let person of people | async; trackBy: personListTrackBy" [@inOutAnimation]="'in'" class="list-group-item d-flex justify-content-between">
 				<span class="mr-auto person-name">
 					{{ person.name }}
 				</span>

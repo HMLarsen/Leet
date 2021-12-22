@@ -1,13 +1,13 @@
 <div class="d-flex flex-wrap justify-content-center align-items-center">
-	<div class="card" *ngFor="let event of events" routerLink="/dashboard/events/{{ event.id }}">
+	<div class="card" *ngFor="let event of events" [@inOutAnimation]="'in'" routerLink="/dashboard/events/{{ event.id }}">
 		<div class="card-img-top">
 			<div *ngIf="!event.bannerUrl && !event.bannerUrlError">
 				<div class="spinner-border" role="status">
 					<span class="visually-hidden">Carregando...</span>
 				</div>
 			</div>
-			<img class="img-fluid rounded-top" *ngIf="event.bannerUrl" [src]="event.bannerUrl" alt="Banner do evento">
-			<i class="bi-x banner-not-found" *ngIf="event.bannerUrlError"></i>
+			<img class="img-fluid rounded-top" *ngIf="event.bannerUrl" [@fadeInOut] [src]="event.bannerUrl" alt="Banner do evento">
+			<i class="bi-x banner-not-found" *ngIf="event.bannerUrlError" [@fadeInOut]></i>
 		</div>
 		<div class="card-body">
 			<h5 class="card-title">{{ event.name }}</h5>
