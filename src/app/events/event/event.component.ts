@@ -41,6 +41,7 @@ export class EventComponent implements OnInit, OnDestroy {
 	) { }
 
 	ngOnInit(): void {
+		this.eventId = this.route.snapshot.paramMap.get('id')!;
 		this.getEvent();
 	}
 
@@ -48,10 +49,9 @@ export class EventComponent implements OnInit, OnDestroy {
 		if (this.eventSubscription) this.eventSubscription.unsubscribe();
 	}
 
-	getEvent() {
-		this.eventId = this.route.snapshot.paramMap.get('id')!;
-		this.eventService.getEvent(this.eventId!).then(observable => {
-			this.eventSubscription = observable.subscribe({
+	async getEvent() {
+		this.eventSubscription = (await this.eventService.getEvent(this.eventId!))
+			.subscribe({
 				next: value => {
 					// control to continue showing the banner if the event had changes
 					const bannerUrl = this.event?.bannerUrl;
@@ -67,7 +67,6 @@ export class EventComponent implements OnInit, OnDestroy {
 				},
 				error: () => this.loadingEvent = false
 			});
-		});
 	}
 
 	setEventBanner() {
