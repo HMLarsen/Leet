@@ -4,7 +4,7 @@
 	</div>
 </div>
 
-<div *ngIf="!loadingEventForEdit" class="mb-3">
+<div *ngIf="!loadingEventForEdit" class="mb-3" [@fadeInOut]>
 	<div class="action-icon-event mb-3" *ngIf="editing && !editingEventNotFound" routerLink="/dashboard/events/{{ editingEvent.id }}">
 		<i class="bi-chevron-left"></i>&nbsp;
 		Voltar ao evento

@@ -1,10 +1,10 @@
-import { animate, style, transition, trigger } from '@angular/animations';
 import { Component, EventEmitter, OnDestroy, OnInit } from '@angular/core';
 import { Timestamp } from '@angular/fire/firestore';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { DomSanitizer, SafeHtml, Title } from '@angular/platform-browser';
 import { ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs';
+import { fadeInOut } from 'src/app/animations';
 import { EventForShow } from 'src/app/model/event.model';
 import { Person } from 'src/app/model/person.model';
 import { EventService } from 'src/app/services/event.service';
@@ -13,14 +13,7 @@ import { EventService } from 'src/app/services/event.service';
 	selector: 'app-event-public',
 	templateUrl: './event-public.component.html',
 	styleUrls: ['./event-public.component.scss'],
-	animations: [
-		trigger('fadeInOut', [
-			transition(':enter', [
-				style({ opacity: 0 }),
-				animate(500, style({ opacity: 1 }))
-			])
-		])
-	]
+	animations: [fadeInOut]
 })
 export class EventPublicComponent implements OnInit, OnDestroy {
 

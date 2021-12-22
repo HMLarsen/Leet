@@ -4,6 +4,7 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
 import { firstValueFrom } from 'rxjs';
+import { fadeInOut } from 'src/app/animations';
 import { ErrorService } from 'src/app/services/error.service';
 import { UtilsService } from 'src/app/services/utils.service';
 import { Event } from '../../model/event.model';
@@ -12,7 +13,8 @@ import { EventService } from '../../services/event.service';
 @Component({
 	selector: 'app-set-event',
 	templateUrl: './set-event.component.html',
-	styleUrls: ['./set-event.component.scss']
+	styleUrls: ['./set-event.component.scss'],
+	animations: [fadeInOut]
 })
 export class SetEventComponent implements OnInit {
 

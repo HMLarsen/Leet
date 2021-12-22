@@ -7,7 +7,7 @@
 	<i class="bi-x-circle-fill"></i>&nbsp;&nbsp;
 	Evento indisponível ou não encontrado
 </p>
-<div *ngIf="!loadingEvent && event">
+<div *ngIf="!loadingEvent && event" [@fadeInOut]>
 	<div class="action-icon-event mb-3 d-block" routerLink="/dashboard/events/{{ event.id }}">
 		<i class="bi-chevron-left"></i>&nbsp;
 		Voltar ao evento
@@ -33,7 +33,7 @@
 	<h6 class="card-subtitle mb-4 text-muted">
 		<span>{{ (people | async)?.length }} pessoa(s)</span>
 	</h6>
-	<div *ngIf="people">
+	<div *ngIf="(people | async)?.length">
 		<div id="list-options">
 			<a class="nav-link action-icon-event" (click)="copyList()">
 				<i [ngClass]="{ 'bi-clipboard': !peopleNameCopied, 'bi-clipboard-check': peopleNameCopied }"></i>

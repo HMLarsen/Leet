@@ -28,8 +28,8 @@ export class EventsPaginationComponent implements OnInit {
 		this.loading = true;
 		this.disabledInfiniteScroll = true;
 		this.eventService.paginateEvents(this.batch, this.lastCreatedDate)
-			.then(data => {
-				const events = data.docs;
+			.then(snapshot => {
+				const events = snapshot.docs;
 				if (!events.length || events.length < this.batch) {
 					this.empty = true;
 				}

@@ -6,11 +6,13 @@ import { EventService } from '../../services/event.service';
 import { UtilsService } from 'src/app/services/utils.service';
 import { ErrorService } from 'src/app/services/error.service';
 import { Subscription } from 'rxjs';
+import { fadeInOut } from 'src/app/animations';
 
 @Component({
 	selector: 'app-event',
 	templateUrl: './event.component.html',
-	styleUrls: ['./event.component.scss']
+	styleUrls: ['./event.component.scss'],
+	animations: [fadeInOut]
 })
 export class EventComponent implements OnInit, OnDestroy {
 
