@@ -12,8 +12,7 @@ export class ErrorService {
 	translateError(error: any) {
 		let errorMessage = 'Tente novamente mais tarde.';
 		if (!error) return errorMessage;
-		if (error instanceof FirebaseError ||
-			error instanceof FirestoreError) {
+		if (error instanceof FirebaseError || error instanceof FirestoreError) {
 			errorMessage = this.translateFirebaseError(error) || errorMessage;
 		}
 		return errorMessage;
@@ -30,7 +29,3 @@ export class ErrorService {
 	}
 
 }
-
-// [code=invalid-argument]: Function DocumentReference.set() called with invalid data. Unsupported field value: a custom File object (found in field banner in document users/hugomarcel91@gmail.com/events/QpCfnqDewjPNHDJUD7H5)
-// FirebaseError: Firebase Storage: User does not have permission to access 'users/hugomarcel91@gmail.com/events/8PEtIbnySVMVXad1o2s5/banner'. (storage/unauthorized)
-// FirebaseError: [code=permission-denied]: Missing or insufficient permissions.

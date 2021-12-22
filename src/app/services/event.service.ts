@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
-import { AngularFirestore } from '@angular/fire/compat/firestore';
+import { AngularFirestore, CollectionReference } from '@angular/fire/compat/firestore';
 import { AngularFireStorage } from '@angular/fire/compat/storage';
 import { Timestamp } from '@angular/fire/firestore';
 import { Event } from '../model/event.model';
@@ -22,13 +22,13 @@ export class EventService {
 		private auth: AngularFireAuth
 	) { }
 
-	getAuthUser() {
+	private getAuthUser() {
 		return this.auth.currentUser;
 	}
 
 	async setEvent(event: Event) {
 		// copy object to prevent original object changes
-		const eventCopy: Event = Object.assign({}, event);
+		let eventCopy: Event = Object.assign({}, event);
 
 		// create new id if null
 		if (!eventCopy.id) {
@@ -41,25 +41,25 @@ export class EventService {
 		const eventBannerFile = eventCopy.bannerFile;
 		delete eventCopy.bannerFile;
 
-		// create the event and upload its banner
+		// create the event
 		const userEmail = (await this.getAuthUser())?.email!;
-		return this.firestore
+		await this.firestore
 			.collection(this.userCollectionName)
 			.doc(userEmail)
 			.collection(this.eventCollectionName)
 			.doc(eventCopy.id)
-			.set(eventCopy)
-			.then(async () => {
-				if (eventBannerFile) {
-					try {
-						await this.uploadEventBanner(eventCopy.id, eventBannerFile);
-					} catch (e) {
-						this.deleteEvent(eventCopy.id);
-						throw e;
-					}
-				}
-				return eventCopy;
-			});
+			.set(eventCopy);
+
+		// upload its banner
+		if (eventBannerFile) {
+			try {
+				await this.uploadEventBanner(eventCopy.id, eventBannerFile);
+			} catch (e) {
+				await this.deleteEvent(eventCopy.id);
+				throw e;
+			}
+		}
+		return eventCopy;
 	}
 
 	async uploadEventBanner(eventId: string, file: any) {
@@ -86,7 +86,8 @@ export class EventService {
 						.where('createdAt', '<', lastCreatedDate)
 						.orderBy('createdAt', 'desc')
 						.limit(limit)
-				)).get()
+				))
+				.get()
 		);
 	}
 
@@ -103,22 +104,21 @@ export class EventService {
 	async deleteEvent(eventId: string) {
 		const userEmail = (await this.getAuthUser())?.email!;
 
-		// delete people from event before
+		// delete people before
 		await this.deleteEventPeople(eventId);
 
 		// delete event
-		return this.firestore
+		await this.firestore
 			.collection(this.userCollectionName)
 			.doc(userEmail)
 			.collection(this.eventCollectionName)
 			.doc(eventId)
-			.delete()
-			.then(async () => {
-				// delete banner
-				const filePath = `${this.userCollectionName}/${userEmail}/events/${eventId}/banner`;
-				const ref = this.storage.ref(filePath);
-				await firstValueFrom(ref.delete());
-			});
+			.delete();
+
+		// delete banner
+		const filePath = `${this.userCollectionName}/${userEmail}/events/${eventId}/banner`;
+		const ref = this.storage.ref(filePath);
+		await firstValueFrom(ref.delete());
 	}
 
 	async deleteEventPeople(eventId: string) {
@@ -133,21 +133,17 @@ export class EventService {
 		await this.deleteCollectionQueryBatch(collectionRef);
 	}
 
-	async deleteCollectionQueryBatch(collectionRef: any) {
+	async deleteCollectionQueryBatch(collectionRef: CollectionReference) {
 		const batchLimit = 20;
 		const snapshot = await collectionRef.limit(batchLimit).get();
-
 		const batchSize = snapshot.size;
 		if (batchSize === 0) {
 			// When there are no documents left, we are done
 			return;
 		}
-
 		// Delete documents in a batch
 		const batch = collectionRef.firestore.batch();
-		snapshot.docs.forEach((doc: any) => {
-			batch.delete(doc.ref);
-		});
+		snapshot.docs.forEach(doc => batch.delete(doc.ref));
 		await batch.commit();
 		await this.deleteCollectionQueryBatch(collectionRef);
 	}
@@ -199,7 +195,7 @@ export class EventService {
 			.collection(this.eventCollectionName)
 			.doc(eventId)
 			.collection<Person>(this.personCollectionName)
-			.snapshotChanges();
+			.valueChanges();
 	}
 
 	async getEventPublicUrlParams(eventId: string) {

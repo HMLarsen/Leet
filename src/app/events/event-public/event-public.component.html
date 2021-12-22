@@ -1,7 +1,7 @@
 <div class="container-lg mt-4 mb-4">
 	<div class="row justify-content-center">
 		<div class="spinner-border" role="status" *ngIf="loadingEvent">
-			<span class="visually-hidden">Loading...</span>
+			<span class="visually-hidden">Carregando...</span>
 		</div>
 		<p class="text-center" *ngIf="!loadingEvent && !event">
 			<i class="bi-x-circle-fill"></i>&nbsp;&nbsp;
@@ -10,8 +10,8 @@
 		<div class="col-md-10 col-lg-12" *ngIf="!loadingEvent && event">
 			<div class="card">
 				<div class="row g-0">
-					<div class="d-flex" *ngIf="downloadLogoURL">
-						<img class="img-fluid w-100 rounded-top" [src]="downloadLogoURL" alt="Banner do evento">
+					<div class="d-flex" *ngIf="event.bannerUrl">
+						<img class="img-fluid w-100 rounded-top" [src]="event.bannerUrl" alt="Banner do evento">
 					</div>
 					<div>
 						<div class="card-body">
@@ -26,13 +26,10 @@
 								<form [formGroup]="inviteForm" (ngSubmit)="onSubmit()" *ngIf="!nameConfirmed">
 									<fieldset [disabled]="loadingSubmit">
 										<div class="form-group mb-2">
-											<input placeholder="Nome completo" class="form-control"
-												formControlName="personName">
+											<input placeholder="Nome completo" class="form-control" formControlName="personName">
 										</div>
-										<button [disabled]="!inviteForm.valid" type="submit"
-											class="btn btn-success w-100">
-											<span *ngIf="loadingSubmit" class="spinner-border spinner-border-sm"
-												role="status" aria-hidden="true"></span>
+										<button [disabled]="!inviteForm.valid" type="submit" class="btn btn-success w-100">
+											<span *ngIf="loadingSubmit" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
 											<span *ngIf="!loadingSubmit">Adicionar na lista</span>
 										</button>
 									</fieldset>

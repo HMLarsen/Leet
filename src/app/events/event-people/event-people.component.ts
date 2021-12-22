@@ -1,118 +1,111 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, EventEmitter, OnDestroy, OnInit } from '@angular/core';
 import { Timestamp } from '@angular/fire/firestore';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Title } from '@angular/platform-browser';
 import { ActivatedRoute } from '@angular/router';
+import { map, Observable, Subscription } from 'rxjs';
 import { Event } from 'src/app/model/event.model';
 import { Person } from 'src/app/model/person.model';
 import { EventService } from 'src/app/services/event.service';
 import { UtilsService } from 'src/app/services/utils.service';
+import { firstValueFrom } from 'rxjs';
+import { ErrorService } from 'src/app/services/error.service';
 
 @Component({
 	selector: 'app-event-people',
 	templateUrl: './event-people.component.html',
 	styleUrls: ['./event-people.component.scss']
 })
-export class EventPeopleComponent implements OnInit {
+export class EventPeopleComponent implements OnInit, OnDestroy {
 
 	eventId: string;
 	event: Event;
-	people: Person[] = [];
+	eventSubscription: Subscription;
+	people: Observable<Person[]>;
 	loadingEvent = true;
 	importNamesForm: FormGroup;
 	peopleNameCopied = false;
 	loadingForm = false;
+	submitFormErrorMessage: string;
+	showModalEmitter = new EventEmitter<string>();
 
 	constructor(
 		private route: ActivatedRoute,
 		private eventService: EventService,
 		private utilsService: UtilsService,
-		private titleService: Title
+		private titleService: Title,
+		private errorService: ErrorService
 	) { }
 
 	ngOnInit(): void {
+		this.eventId = this.route.snapshot.paramMap.get('id')!;
 		this.importNamesForm = new FormGroup({
 			names: new FormControl('', Validators.required)
 		});
 		this.getEvent();
 	}
 
-	getEvent() {
-		this.eventId = this.route.snapshot.paramMap.get('id')!;
-		this.eventService.getEvent(this.eventId)
-			.then(observable => {
-				observable.subscribe({
-					next: value => {
-						this.event = value.payload.data()!;
-						if (this.event) {
-							this.titleService.setTitle('Leet - ' + this.event.name);
-							this.getPeople();
-						}
-						this.loadingEvent = false;
-					},
-					error: error => {
-						this.loadingEvent = false;
-					}
-				});
-			});
+	ngOnDestroy(): void {
+		if (this.eventSubscription) this.eventSubscription.unsubscribe();
 	}
 
-	sortPeople(people: Person[]) {
-		people.sort((a, b) => {
-			if (a.name > b.name) return 1;
-			if (b.name > a.name) return -1;
-			return 0;
+	async getEvent() {
+		const observable = await this.eventService.getEvent(this.eventId)
+		this.eventSubscription = observable.subscribe({
+			next: value => {
+				this.event = value.payload.data()!;
+				if (this.event) {
+					this.titleService.setTitle('Leet - ' + this.event.name);
+					this.getPeople();
+				}
+				this.loadingEvent = false;
+			},
+			error: () => this.loadingEvent = false
 		});
 	}
 
-	getPeople() {
-		this.eventService.getPeople(this.eventId)
-			.then(observable => {
-				observable.subscribe({
-					next: value => {
-						this.people = [];
-						value.forEach(data => {
-							const person = data.payload.doc.data();
-							person.name = this.utilsService.capitalize(person.name);
-							this.people.push(person);
-						});
-						this.sortPeople(this.people);
-					}
-				});
-			});
+	async getPeople() {
+		const observable = await this.eventService.getPeople(this.eventId)
+		this.people = observable.pipe(
+			map(people => {
+				// capitalize and sort
+				people.map(person => person.name = this.utilsService.capitalize(person.name));
+				return people.sort((a, b) => (a.name > b.name) ? 1 : -1);
+			})
+		);
 	}
 
 	async onSubmitImportNamesForm() {
+		this.loadingForm = true;
 		try {
-			this.loadingForm = true;
-			const names = this.importNamesForm.get('names')?.value?.split('\n');
+			const names = this.importNamesForm.get('names')?.value.split('\n');
 			const fillDate = Timestamp.now();
 			const people: Person[] = [];
-			names.map((name: string) => {
+			names.forEach((name: string) => {
 				name = name.trim();
 				if (!!name) {
-					const person: Person = { name, fillDate };
-					people.push(person)
+					people.push({ name, fillDate })
 				}
 			});
 			await this.eventService.addPeople(this.eventId, people);
-			this.loadingForm = false;
-			this.importNamesForm.reset();
 		} catch (e) {
-			alert('Ocorreu um erro: ' + e);
+			this.submitFormErrorMessage = this.errorService.translateError(e);
+			this.showModalEmitter.emit();
+		} finally {
+			this.importNamesForm.reset();
 			this.loadingForm = false;
 		}
 	}
 
-	copyList() {
-		const peopleNames = this.people.map(person => person.name);
-		this.utilsService.copyTextToClipboard(peopleNames.join('\n'));
+	async copyList() {
+		const peopleName = (await firstValueFrom(this.people)).map(person => person.name);
+		this.utilsService.copyTextToClipboard(peopleName.join('\n'));
 		this.peopleNameCopied = true;
 		setTimeout(() => this.peopleNameCopied = false, 2000);
 	}
 
 	personListTrackBy(index: number, item: Person) {
-		return item.name;
+		return item.id;
 	}
 
 }

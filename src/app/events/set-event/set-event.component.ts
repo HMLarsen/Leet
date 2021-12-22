@@ -3,6 +3,7 @@ import { Timestamp } from '@angular/fire/firestore';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
+import { firstValueFrom } from 'rxjs';
 import { ErrorService } from 'src/app/services/error.service';
 import { UtilsService } from 'src/app/services/utils.service';
 import { Event } from '../../model/event.model';
@@ -16,14 +17,17 @@ import { EventService } from '../../services/event.service';
 export class SetEventComponent implements OnInit {
 
 	eventForm: FormGroup;
-	editing = false;
-	editingEventId: string;
-	editingEvent: Event;
-	loadingEvent = true;
-	loading = false;
+	loadingFormSubmit = false;
 	editor: any;
 	submitFormErrorMessage: string;
 	showModalEmitter = new EventEmitter<string>();
+
+	// edit
+	editing = false;
+	editingEventId: string;
+	editingEvent: Event;
+	loadingEventForEdit = false;
+	editingEventNotFound = false;
 
 	constructor(
 		private route: ActivatedRoute,
@@ -35,8 +39,6 @@ export class SetEventComponent implements OnInit {
 	) { }
 
 	ngOnInit(): void {
-		this.titleService.setTitle('Leet - Criar evento');
-
 		this.eventForm = new FormGroup({
 			createdAt: new FormControl(''),
 			bannerFile: new FormControl('', Validators.required),
@@ -51,37 +53,29 @@ export class SetEventComponent implements OnInit {
 		this.editing = this.router.url.includes('/edit') && !!this.editingEventId;
 
 		if (this.editing) {
-			this.getEvent();
+			this.getEventForEdit();
 		} else {
-			this.loadingEvent = false;
+			this.titleService.setTitle('Leet - Criar evento');
+			this.loadingEventForEdit = false;
 		}
 	}
 
-	getEvent() {
-		this.loadingEvent = true;
-		this.eventService.getEvent(this.editingEventId).then(observable => {
-			const obsRef = observable.subscribe({
-				next: value => {
-					const event = value.payload.data();
-					if (event) {
-						this.editingEvent = event;
-						this.titleService.setTitle('Leet - Editar ' + event.name);
-						this.eventForm.get('createdAt')?.setValue(event.createdAt);
-						this.eventForm.get('bannerFile')?.clearValidators();
-						this.eventForm.get('name')?.setValue(event.name);
-						this.eventForm.get('description')?.setValue(event.description);
-						this.eventForm.get('date')?.setValue(this.utilsService.toLocaleISOString(event.date?.toDate()).slice(0, -8));
-						this.eventForm.get('acceptingParticipations')?.setValue(event.acceptingParticipations);
-					}
-					this.loadingEvent = false;
-					obsRef.unsubscribe();
-				},
-				error: () => {
-					this.loadingEvent = false;
-					obsRef.unsubscribe();
-				}
-			});
-		});
+	async getEventForEdit() {
+		this.loadingEventForEdit = true;
+		const event = (await firstValueFrom(await this.eventService.getEvent(this.editingEventId))).payload.data();
+		if (event) {
+			this.editingEvent = event;
+			this.eventForm.get('createdAt')?.setValue(event.createdAt);
+			this.eventForm.get('bannerFile')?.clearValidators();
+			this.eventForm.get('name')?.setValue(event.name);
+			this.eventForm.get('description')?.setValue(event.description);
+			this.eventForm.get('date')?.setValue(this.utilsService.toLocaleISOString(event.date?.toDate()).slice(0, -8));
+			this.eventForm.get('acceptingParticipations')?.setValue(event.acceptingParticipations);
+			this.titleService.setTitle('Leet - Editar ' + event.name);
+		} else {
+			this.editingEventNotFound = true;
+		}
+		this.loadingEventForEdit = false;
 	}
 
 	getField(name: string) {
@@ -99,8 +93,8 @@ export class SetEventComponent implements OnInit {
 				return;
 			}
 			// validate size
-			const maximumSize = 3 * 1024 * 1024; // 3MB
-			if (file.size > maximumSize) {
+			const maxSize = 3 * 1024 * 1024; // 3MB
+			if (file.size > maxSize) {
 				invalidateFile();
 				return;
 			}
@@ -113,20 +107,12 @@ export class SetEventComponent implements OnInit {
 		bannerFileControl?.setValue(file);
 	}
 
-	editorChange(data: string) {
-		this.eventForm.get('description')?.setValue(data);
-	}
-
-	editorReady(editor: any) {
-		this.editor = editor;
-	}
-
-	onSubmit() {
+	onSubmitForm() {
 		this.eventForm.markAllAsTouched();
 		if (this.eventForm.invalid) return;
 
 		// disable form
-		this.loading = true;
+		this.loadingFormSubmit = true;
 		this.editor.disable();
 
 		// prepare event
@@ -140,7 +126,7 @@ export class SetEventComponent implements OnInit {
 		this.eventService.setEvent(event)
 			.then(event => this.router.navigate(['/dashboard/events/' + event.id]))
 			.catch(error => {
-				this.loading = false;
+				this.loadingFormSubmit = false;
 				this.editor.enable();
 				this.submitFormErrorMessage = this.errorService.translateError(error);
 				this.showModalEmitter.emit();

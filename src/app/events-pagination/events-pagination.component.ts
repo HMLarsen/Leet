@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { EventService } from '../services/event.service';
-import { map } from 'rxjs/operators';
 import { Timestamp } from '@angular/fire/firestore';
 import { EventForShow } from '../model/event.model';
 
@@ -31,18 +30,20 @@ export class EventsPaginationComponent implements OnInit {
 		this.eventService.paginateEvents(this.batch, this.lastCreatedDate)
 			.then(data => {
 				const events = data.docs;
-				if (!events.length) {
+				if (!events.length || events.length < this.batch) {
 					this.empty = true;
 				}
 				const lastItem = events[events.length - 1];
 				if (lastItem) {
 					this.lastCreatedDate = lastItem.data().createdAt;
-					data.forEach(eventSnap => {
+					events.forEach(eventSnap => {
 						const event = eventSnap.data();
 						this.events.push(event);
 						this.setEventBanner(event);
 					});
 				}
+			})
+			.finally(() => {
 				this.loading = false;
 				this.disabledInfiniteScroll = false;
 			});

@@ -1,21 +1,22 @@
-import { ChangeDetectorRef, Component, EventEmitter, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, EventEmitter, OnDestroy, OnInit } from '@angular/core';
 import { DomSanitizer, SafeHtml, Title } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Event } from '../../model/event.model';
+import { EventForShow } from '../../model/event.model';
 import { EventService } from '../../services/event.service';
 import { UtilsService } from 'src/app/services/utils.service';
 import { ErrorService } from 'src/app/services/error.service';
+import { Subscription } from 'rxjs';
 
 @Component({
 	selector: 'app-event',
 	templateUrl: './event.component.html',
 	styleUrls: ['./event.component.scss']
 })
-export class EventComponent implements OnInit {
+export class EventComponent implements OnInit, OnDestroy {
 
 	eventId: string;
-	event: Event;
-	downloadLogoURL: string;
+	event: EventForShow;
+	eventSubscription: Subscription;
 	loadingEvent = true;
 	eventUrlCopied = false;
 	eventDescriptionHtml: SafeHtml;
@@ -41,35 +42,35 @@ export class EventComponent implements OnInit {
 		this.getEvent();
 	}
 
+	ngOnDestroy(): void {
+		if (this.eventSubscription) this.eventSubscription.unsubscribe();
+	}
+
 	getEvent() {
 		this.eventId = this.route.snapshot.paramMap.get('id')!;
 		this.eventService.getEvent(this.eventId!).then(observable => {
-			const obsRef = observable.subscribe({
+			this.eventSubscription = observable.subscribe({
 				next: value => {
+					// control to continue showing the banner if the event had changes
+					const bannerUrl = this.event?.bannerUrl;
 					this.event = value.payload.data()!;
 					if (this.event) {
+						this.event.bannerUrl = bannerUrl;
 						this.eventDescriptionHtml = this.sanitizer.bypassSecurityTrustHtml(this.event.description);
-						this.getEventBanner();
+						if (!bannerUrl) this.setEventBanner();
 						this.titleService.setTitle('Leet - ' + this.event.name);
 					} else {
-						this.loadingEvent = false
+						this.loadingEvent = false;
 					}
-					obsRef.unsubscribe();
 				},
-				error: () => {
-					this.loadingEvent = false;
-					obsRef.unsubscribe();
-				}
+				error: () => this.loadingEvent = false
 			});
 		});
 	}
 
-	getEventBanner() {
+	setEventBanner() {
 		this.eventService.getEventBanner(this.eventId!)
-			.then(downloadUrl => {
-				this.downloadLogoURL = downloadUrl;
-				this.loadingEvent = false;
-			})
+			.then(downloadUrl => this.event.bannerUrl = downloadUrl)
 			.finally(() => this.loadingEvent = false);
 	}
 
@@ -87,7 +88,6 @@ export class EventComponent implements OnInit {
 				this.router.navigate(['/dashboard/events']);
 			})
 			.catch(error => {
-				console.error(error);
 				this.loadingDeleteEvent = false;
 				this.deleteEventErrorMessage = this.errorService.translateError(error);
 				this.changeDetectorRef.detectChanges();
@@ -110,6 +110,7 @@ export class EventComponent implements OnInit {
 		// copy
 		this.utilsService.copyTextToClipboard(url);
 
+		// screen change
 		this.eventUrlCopied = true;
 		setTimeout(() => this.eventUrlCopied = false, 2000);
 	}

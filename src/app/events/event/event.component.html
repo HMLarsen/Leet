@@ -13,8 +13,8 @@
 	<div class="col-md-10 col-lg-12 mb-3" *ngIf="!loadingEvent && event">
 		<div class="card">
 			<div class="row g-0">
-				<div class="d-flex" *ngIf="downloadLogoURL">
-					<img class="img-fluid w-100 rounded-top" [src]="downloadLogoURL" alt="Banner do evento">
+				<div class="d-flex" *ngIf="event.bannerUrl">
+					<img class="img-fluid w-100 rounded-top" [src]="event.bannerUrl" alt="Banner do evento">
 				</div>
 				<div>
 					<div class="card-body">
@@ -34,15 +34,13 @@
 								</a>
 							</li>
 							<li class="nav-item">
-								<a class="nav-link action-icon-event"
-									routerLink="/dashboard/events/{{ event.id }}/edit">
+								<a class="nav-link action-icon-event" routerLink="/dashboard/events/{{ event.id }}/edit">
 									<i class="bi-pencil-square"></i>
 									Editar
 								</a>
 							</li>
 							<li class="nav-item">
-								<a class="nav-link action-icon-event"
-									routerLink="/dashboard/events/{{ event.id }}/people">
+								<a class="nav-link action-icon-event" routerLink="/dashboard/events/{{ event.id }}/people">
 									<i class="bi-person-lines-fill"></i>
 									Participantes
 								</a>
@@ -67,10 +65,14 @@
 			</div>
 		</div>
 
-		<app-modal modalType="deleteConfirmation" [showModalEmitter]="showModalEmitter"
-			[closeModalEmitter]="closeModalEmitter" [title]="'Excluir evento ' + event.name"
-			detailMessage="Tem certeza que deseja excluir este evento?" [errorMessage]="deleteEventErrorMessage"
-			[loading]="loadingDeleteEvent" [showErrorModalEmitter]="showErrorModalEmitter"
+		<app-modal modalType="deleteConfirmation"
+			[showModalEmitter]="showModalEmitter"
+			[closeModalEmitter]="closeModalEmitter"
+			[title]="'Excluir evento ' + event.name"
+			detailMessage="Tem certeza que deseja excluir este evento?"
+			[errorMessage]="deleteEventErrorMessage"
+			[loading]="loadingDeleteEvent"
+			[showErrorModalEmitter]="showErrorModalEmitter"
 			(confirm)="confirmDeleteEvent()"></app-modal>
 	</div>
 </div>

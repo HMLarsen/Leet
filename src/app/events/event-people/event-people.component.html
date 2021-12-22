@@ -23,8 +23,7 @@
 				<textarea class="form-control" id="names" formControlName="names" rows="7"></textarea>
 			</div>
 			<button [disabled]="!importNamesForm.valid" type="submit" class="btn btn-success w-100">
-				<span *ngIf="loadingForm" class="spinner-border spinner-border-sm" role="status"
-					aria-hidden="true"></span>
+				<span *ngIf="loadingForm" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
 				<span *ngIf="!loadingForm">Adicionar na lista</span>
 			</button>
 		</fieldset>
@@ -32,9 +31,9 @@
 
 	<h5>Nomes na lista</h5>
 	<h6 class="card-subtitle mb-4 text-muted">
-		<span>{{ people.length }} pessoa(s)</span>
+		<span>{{ (people | async)?.length }} pessoa(s)</span>
 	</h6>
-	<div *ngIf="people.length > 0">
+	<div *ngIf="people">
 		<div id="list-options">
 			<a class="nav-link action-icon-event" (click)="copyList()">
 				<i [ngClass]="{ 'bi-clipboard': !peopleNameCopied, 'bi-clipboard-check': peopleNameCopied }"></i>
@@ -43,8 +42,7 @@
 		</div>
 
 		<ol class="list-group list-group-flush mb-3 mt-3">
-			<li *ngFor="let person of people; trackBy: personListTrackBy"
-				class="list-group-item d-flex justify-content-between">
+			<li *ngFor="let person of people | async; trackBy: personListTrackBy" class="list-group-item d-flex justify-content-between">
 				<span class="mr-auto person-name">
 					{{ person.name }}
 				</span>
@@ -55,3 +53,5 @@
 		</ol>
 	</div>
 </div>
+
+<app-modal modalType="error" [showModalEmitter]="showModalEmitter" [errorMessage]="submitFormErrorMessage"></app-modal>
