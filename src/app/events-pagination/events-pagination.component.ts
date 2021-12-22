@@ -30,19 +30,20 @@ export class EventsPaginationComponent implements OnInit {
 		this.loading = true;
 		this.disabledInfiniteScroll = true;
 		this.eventService.paginateEvents(this.batch, this.lastCreatedDate)
-			.then(snapshot => {
-				const events = snapshot.docs;
+			.then(snapshots => {
+				const events = snapshots.docs;
 				if (!events.length || events.length < this.batch) {
 					this.empty = true;
 				}
 				const lastItem = events[events.length - 1];
 				if (lastItem) {
 					this.lastCreatedDate = lastItem.data().createdAt;
-					events.forEach(eventSnap => {
-						const event = eventSnap.data();
+					for (let index = 0; index < events.length; index++) {
+						const snapshot = events[index];
+						const event = snapshot.data();
 						this.events.push(event);
 						this.setEventBanner(event);
-					});
+					}
 				}
 			})
 			.finally(() => {

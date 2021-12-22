@@ -26,7 +26,7 @@ import { EventComponent } from './events/event/event.component';
 import { MyEventsComponent } from './events/my-events.component';
 import { EventPublicComponent } from './events/event-public/event-public.component';
 import { EditorDirective } from './directives/editor.directive';
-import { EventPeopleComponent } from './events/event-people/event-people.component';
+import { EventParticipantsComponent } from './events/event-participants/event-participants.component';
 import { ModalComponent } from './modal/modal.component';
 import { EventsPaginationComponent } from './events-pagination/events-pagination.component';
 import { InfiniteScrollModule } from 'ngx-infinite-scroll';
@@ -41,7 +41,7 @@ import { InfiniteScrollModule } from 'ngx-infinite-scroll';
 		MyEventsComponent,
 		EventPublicComponent,
 		EditorDirective,
-		EventPeopleComponent,
+		EventParticipantsComponent,
 		ModalComponent,
 		EventsPaginationComponent
 	],

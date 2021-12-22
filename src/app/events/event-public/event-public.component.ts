@@ -1,12 +1,10 @@
 import { Component, EventEmitter, OnDestroy, OnInit } from '@angular/core';
-import { Timestamp } from '@angular/fire/firestore';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { DomSanitizer, SafeHtml, Title } from '@angular/platform-browser';
 import { ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { fadeInOut } from 'src/app/animations';
 import { EventForShow } from 'src/app/model/event.model';
-import { Person } from 'src/app/model/person.model';
 import { EventService } from 'src/app/services/event.service';
 
 @Component({
@@ -37,7 +35,7 @@ export class EventPublicComponent implements OnInit, OnDestroy {
 
 	ngOnInit(): void {
 		this.inviteForm = new FormGroup({
-			personName: new FormControl('', [Validators.required, this.noWhitespaceValidator])
+			participantName: new FormControl('', [Validators.required, this.noWhitespaceValidator])
 		});
 		this.getEvent();
 	}
@@ -62,7 +60,7 @@ export class EventPublicComponent implements OnInit, OnDestroy {
 					next: value => {
 						// control to continue showing the banner if the event had changes
 						const bannerUrl = this.event?.bannerUrl;
-						this.event = value.payload.data()!;
+						this.event = value!;
 						if (this.event) {
 							this.event.bannerUrl = bannerUrl;
 							this.eventDescriptionHtml = this.sanitizer.bypassSecurityTrustHtml(this.event.description);
@@ -85,12 +83,8 @@ export class EventPublicComponent implements OnInit, OnDestroy {
 
 	onSubmit() {
 		this.loadingSubmit = true;
-		const personName = this.inviteForm.get('personName')?.value.trim();
-		const person: Person = {
-			name: personName,
-			fillDate: Timestamp.now()
-		};
-		this.eventService.addPerson(this.eventId, person, this.eventUserEmail)
+		const participantName = this.inviteForm.get('participantName')?.value.trim();
+		this.eventService.addParticipant(this.eventId, participantName, this.eventUserEmail)
 			.then(() => {
 				this.nameConfirmed = true;
 				this.inviteForm.reset();

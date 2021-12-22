@@ -8,7 +8,7 @@ import { SetEventComponent } from './events/set-event/set-event.component';
 import { EventComponent } from './events/event/event.component';
 import { MyEventsComponent } from './events/my-events.component';
 import { EventPublicComponent } from './events/event-public/event-public.component';
-import { EventPeopleComponent } from './events/event-people/event-people.component';
+import { EventParticipantsComponent } from './events/event-participants/event-participants.component';
 
 const redirectUnauthorized = () => redirectUnauthorizedTo(['']);
 const redirectAuthorizedToDashboard = () => redirectLoggedInTo(['dashboard']);
@@ -22,7 +22,7 @@ const routes: Routes = [
 			{ path: 'events/create', component: SetEventComponent },
 			{ path: 'events/:id', component: EventComponent },
 			{ path: 'events/:id/edit', component: SetEventComponent },
-			{ path: 'events/:id/people', component: EventPeopleComponent }
+			{ path: 'events/:id/participants', component: EventParticipantsComponent }
 		]
 	},
 	{ path: 'events/:params', component: EventPublicComponent },

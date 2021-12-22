@@ -47,7 +47,7 @@
 				<button type="button" class="btn btn-secondary" data-bs-dismiss="modal" [disabled]="loading">Cancelar</button>
 				<button type="button" class="btn btn-danger" (click)="confirmModal()" [disabled]="loading">
 					<span *ngIf="loading" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-					Excluir
+					{{ loading ? 'Excluindo' : 'Excluir' }}
 				</button>
 			</div>
 		</div>

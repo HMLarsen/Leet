@@ -55,7 +55,7 @@ export class EventComponent implements OnInit, OnDestroy {
 				next: value => {
 					// control to continue showing the banner if the event had changes
 					const bannerUrl = this.event?.bannerUrl;
-					this.event = value.payload.data()!;
+					this.event = value!;
 					if (this.event) {
 						this.event.bannerUrl = bannerUrl;
 						this.eventDescriptionHtml = this.sanitizer.bypassSecurityTrustHtml(this.event.description);

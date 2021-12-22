@@ -1,0 +1,82 @@
+<div class="text-center">
+	<div class="spinner-border" role="status" *ngIf="loadingEvent">
+		<span class="visually-hidden">Loading...</span>
+	</div>
+</div>
+<p class="text-center" *ngIf="!loadingEvent && !event" [@fadeInOut]>
+	<i class="bi-x-circle-fill"></i>&nbsp;&nbsp;
+	Evento indisponível ou não encontrado
+</p>
+<div *ngIf="!loadingEvent && event" [@fadeInOut]>
+	<div class="action-icon-event mb-3 d-block" routerLink="/dashboard/events/{{ event.id }}">
+		<i class="bi-chevron-left"></i>&nbsp;
+		Voltar ao evento
+	</div>
+	<h1 class="display-6">{{ event.name }}</h1>
+	<h6 class="card-subtitle mb-4 text-muted" *ngIf="event.date">
+		{{ event.date.seconds * 1000 | date:'EEEE - dd/MM/yyyy HH:mm' | titlecase }}
+	</h6>
+	<form [formGroup]="importNamesForm" (ngSubmit)="onSubmitImportNamesForm()" class="mb-4">
+		<fieldset [disabled]="loadingForm">
+			<div class="mb-2">
+				<h5>Incluir participantes na lista</h5>
+				<h6 class="card-subtitle mb-3 text-muted">
+					<span>Nomes separados por linha (máximo de 500 nomes por vez)</span>
+				</h6>
+				<textarea class="form-control" id="names" formControlName="names" rows="7"></textarea>
+			</div>
+			<button [disabled]="!importNamesForm.valid" type="submit" class="btn btn-success w-100">
+				<span *ngIf="loadingForm" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>&nbsp;
+				<span>{{ loadingForm ? 'Incluindo' : 'Incluir participantes' }}</span>
+			</button>
+		</fieldset>
+	</form>
+
+	<div *ngIf="emptyParticipants" [@fadeInOut]>
+		<i class="bi-person-x-fill"></i>&nbsp;
+		Nenhum participante
+	</div>
+
+	<div *ngIf="(participants | async)?.length" [@fadeInOut]>
+		<h5>Participantes</h5>
+		<h6 class="card-subtitle mb-3 text-muted">
+			<span>{{ (participants | async)?.length }} pessoa(s)</span>
+		</h6>
+
+		<div id="list-options" class="d-flex justify-content-between flex-wrap">
+			<a class="nav-link action-icon-event" (click)="copyList()">
+				<i [ngClass]="{ 'bi-clipboard': !participantsNameCopied, 'bi-clipboard-check': participantsNameCopied }"></i>
+				{{ participantsNameCopied ? 'Copiados!' : 'Copiar nomes' }}
+			</a>
+			<a class="nav-link action-icon-event pe-0" (click)="deleteParticipants()">
+				<i class="bi-x-octagon"></i>
+				Excluir participantes
+			</a>
+		</div>
+
+		<table class="table table-hover mt-3">
+			<thead>
+				<tr>
+					<th scope="col">Nome</th>
+					<th scope="col" class="text-end">Data inclusão</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr *ngFor="let participant of participants | async; trackBy: participantListTrackBy" [@inOutAnimation]="'in'">
+					<td class="participant-name pe-3">{{ participant.name }}</td>
+					<td class="text-end text-nowrap">{{ participant.fillDate.toDate() | date:'dd/MM/yyyy HH:mm' }}</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+</div>
+
+<app-modal modalType="deleteConfirmation"
+	[showModalEmitter]="showModalConfirmEmitter"
+	[closeModalEmitter]="closeModalEmitter"
+	[title]="'Excluir lista de participantes'"
+	detailMessage="Tem certeza que deseja excluir todos os participantes do evento?"
+	[errorMessage]="errorMessage"
+	[loading]="loadingDeleteParticipants"
+	[showErrorModalEmitter]="showErrorModalEmitter"
+	(confirm)="confirmDeleteParticipants()"></app-modal>

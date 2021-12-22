@@ -64,7 +64,7 @@ export class SetEventComponent implements OnInit {
 
 	async getEventForEdit() {
 		this.loadingEventForEdit = true;
-		const event = (await firstValueFrom(await this.eventService.getEvent(this.editingEventId))).payload.data();
+		const event = (await firstValueFrom(await this.eventService.getEvent(this.editingEventId)));
 		if (event) {
 			this.editingEvent = event;
 			this.eventForm.get('createdAt')?.setValue(event.createdAt);

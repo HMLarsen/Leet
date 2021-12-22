@@ -4,7 +4,7 @@ import { AngularFirestore, CollectionReference } from '@angular/fire/compat/fire
 import { AngularFireStorage } from '@angular/fire/compat/storage';
 import { Timestamp } from '@angular/fire/firestore';
 import { Event } from '../model/event.model';
-import { Person } from '../model/person.model';
+import { Participant } from '../model/participant.model';
 import { firstValueFrom } from 'rxjs';
 
 @Injectable({
@@ -12,9 +12,9 @@ import { firstValueFrom } from 'rxjs';
 })
 export class EventService {
 
-	userCollectionName = 'users';
-	eventCollectionName = 'events';
-	personCollectionName = 'people';
+	usersCollectionName = 'users';
+	eventsCollectionName = 'events';
+	participantsCollectionName = 'participants';
 
 	constructor(
 		private firestore: AngularFirestore,
@@ -44,9 +44,9 @@ export class EventService {
 		// create the event
 		const userEmail = (await this.getAuthUser())?.email!;
 		await this.firestore
-			.collection(this.userCollectionName)
+			.collection(this.usersCollectionName)
 			.doc(userEmail)
-			.collection(this.eventCollectionName)
+			.collection(this.eventsCollectionName)
 			.doc(eventCopy.id)
 			.set(eventCopy);
 
@@ -64,7 +64,7 @@ export class EventService {
 
 	async uploadEventBanner(eventId: string, file: any) {
 		const userEmail = (await this.getAuthUser())?.email!;
-		const filePath = `${this.userCollectionName}/${userEmail}/events/${eventId}/banner`;
+		const filePath = `${this.usersCollectionName}/${userEmail}/events/${eventId}/banner`;
 		const ref = this.storage.ref(filePath);
 		const metadata = {
 			customMetadata: {
@@ -79,9 +79,9 @@ export class EventService {
 		const userEmail = (await this.getAuthUser())?.email!;
 		return firstValueFrom(
 			this.firestore
-				.collection(this.userCollectionName)
+				.collection(this.usersCollectionName)
 				.doc(userEmail)
-				.collection<Event>(this.eventCollectionName, ref => (
+				.collection<Event>(this.eventsCollectionName, ref => (
 					ref
 						.where('createdAt', '<', lastCreatedDate)
 						.orderBy('createdAt', 'desc')
@@ -94,41 +94,41 @@ export class EventService {
 	async getEvent(eventId: string, userEmail?: string) {
 		userEmail = userEmail || (await this.getAuthUser())?.email!;
 		return this.firestore
-			.collection(this.userCollectionName)
+			.collection(this.usersCollectionName)
 			.doc(userEmail)
-			.collection(this.eventCollectionName)
+			.collection(this.eventsCollectionName)
 			.doc<Event>(eventId)
-			.snapshotChanges();
+			.valueChanges();
 	}
 
 	async deleteEvent(eventId: string) {
 		const userEmail = (await this.getAuthUser())?.email!;
 
-		// delete people before
-		await this.deleteEventPeople(eventId);
+		// delete participants before
+		await this.deleteParticipants(eventId);
 
 		// delete event
 		await this.firestore
-			.collection(this.userCollectionName)
+			.collection(this.usersCollectionName)
 			.doc(userEmail)
-			.collection(this.eventCollectionName)
+			.collection(this.eventsCollectionName)
 			.doc(eventId)
 			.delete();
 
 		// delete banner
-		const filePath = `${this.userCollectionName}/${userEmail}/events/${eventId}/banner`;
+		const filePath = `${this.usersCollectionName}/${userEmail}/events/${eventId}/banner`;
 		const ref = this.storage.ref(filePath);
 		await firstValueFrom(ref.delete());
 	}
 
-	async deleteEventPeople(eventId: string) {
+	async deleteParticipants(eventId: string) {
 		const userEmail = (await this.getAuthUser())?.email!;
 		const collectionRef = this.firestore
-			.collection(this.userCollectionName)
+			.collection(this.usersCollectionName)
 			.doc(userEmail)
-			.collection(this.eventCollectionName)
+			.collection(this.eventsCollectionName)
 			.doc(eventId)
-			.collection(this.personCollectionName)
+			.collection(this.participantsCollectionName)
 			.ref;
 		await this.deleteCollectionQueryBatch(collectionRef);
 	}
@@ -143,58 +143,66 @@ export class EventService {
 		}
 		// Delete documents in a batch
 		const batch = collectionRef.firestore.batch();
-		snapshot.docs.forEach(doc => batch.delete(doc.ref));
+		for (let index = 0; index < snapshot.docs.length; index++) {
+			const doc = snapshot.docs[index];
+			batch.delete(doc.ref)
+		}
 		await batch.commit();
 		await this.deleteCollectionQueryBatch(collectionRef);
 	}
 
 	async getEventBanner(eventId: string, userEmail?: string) {
 		userEmail = userEmail || (await this.getAuthUser())?.email!;
-		const filePath = `${this.userCollectionName}/${userEmail}/events/${eventId}/banner`;
+		const filePath = `${this.usersCollectionName}/${userEmail}/events/${eventId}/banner`;
 		const ref = this.storage.ref(filePath);
 		return firstValueFrom(ref.getDownloadURL());
 	}
 
-	async addPerson(eventId: string, person: Person, userEmail?: string) {
+	async addParticipant(eventId: string, name: string, userEmail?: string) {
+		name = (name || '').trim();
+		if (!name) throw new Error;
 		userEmail = userEmail || (await this.getAuthUser())?.email!;
-		const newPersonId = this.firestore.createId();
-		person.id = newPersonId;
+		const id = this.firestore.createId();
+		const fillDate = Timestamp.now();
 		return this.firestore
-			.collection(this.userCollectionName)
+			.collection(this.usersCollectionName)
 			.doc(userEmail)
-			.collection(this.eventCollectionName)
+			.collection(this.eventsCollectionName)
 			.doc(eventId)
-			.collection(this.personCollectionName)
-			.doc(newPersonId)
-			.set(person);
+			.collection(this.participantsCollectionName)
+			.doc(id)
+			.set({ id, name, fillDate });
 	}
 
-	async addPeople(eventId: string, people: Person[], userEmail?: string) {
-		userEmail = userEmail || (await this.getAuthUser())?.email!;
+	async addParticipants(eventId: string, names: string[]) {
+		const userEmail = (await this.getAuthUser())?.email!;
 		const ref = this.firestore
-			.collection(this.userCollectionName)
+			.collection(this.usersCollectionName)
 			.doc(userEmail)
-			.collection(this.eventCollectionName)
+			.collection(this.eventsCollectionName)
 			.doc(eventId)
-			.collection(this.personCollectionName)
+			.collection(this.participantsCollectionName)
 			.ref;
+		const fillDate = Timestamp.now();
 		const batch = ref.firestore.batch();
-		people.forEach(person => {
-			person.id = this.firestore.createId();
-			const newPersonRef = ref.doc(person.id);
-			batch.set(newPersonRef, person);
-		});
+		for (let index = 0; index < names.length; index++) {
+			let name = (names[index] || '').trim();
+			if (!name) continue;
+			const id = this.firestore.createId();
+			const newParticipantRef = ref.doc(id);
+			batch.set(newParticipantRef, { id, name, fillDate });
+		}
 		return batch.commit();
 	}
 
-	async getPeople(eventId: string) {
+	async getParticipants(eventId: string) {
 		const userEmail = (await this.getAuthUser())?.email!;
 		return this.firestore
-			.collection(this.userCollectionName)
+			.collection(this.usersCollectionName)
 			.doc(userEmail)
-			.collection(this.eventCollectionName)
+			.collection(this.eventsCollectionName)
 			.doc(eventId)
-			.collection<Person>(this.personCollectionName)
+			.collection<Participant>(this.participantsCollectionName)
 			.valueChanges();
 	}
 
