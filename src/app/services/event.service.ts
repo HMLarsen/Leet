@@ -75,7 +75,7 @@ export class EventService {
 		return ref.put(file, metadata);
 	}
 
-	async paginateEvents(limit: number, lastCreatedDate: Timestamp) {
+	async getPaginatedEvents(limit: number, lastCreatedDate: Timestamp) {
 		const userEmail = (await this.getAuthUser())?.email!;
 		return firstValueFrom(
 			this.firestore
