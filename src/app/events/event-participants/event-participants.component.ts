@@ -1,14 +1,12 @@
 import { ChangeDetectorRef, Component, EventEmitter, OnDestroy, OnInit } from '@angular/core';
-import { Timestamp } from '@angular/fire/firestore';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Title } from '@angular/platform-browser';
 import { ActivatedRoute } from '@angular/router';
-import { map, Observable, Subscription } from 'rxjs';
+import { map, Subscription } from 'rxjs';
 import { Event } from 'src/app/model/event.model';
 import { Participant } from 'src/app/model/participant.model';
 import { EventService } from 'src/app/services/event.service';
 import { UtilsService } from 'src/app/services/utils.service';
-import { firstValueFrom } from 'rxjs';
 import { ErrorService } from 'src/app/services/error.service';
 import { fadeInOut, inOutAnimation } from 'src/app/animations';
 
@@ -31,7 +29,8 @@ export class EventParticipantsComponent implements OnInit, OnDestroy {
 	showErrorModalEmitter = new EventEmitter<string>();
 	closeModalEmitter = new EventEmitter();
 
-	participants: Observable<Participant[]>;
+	participants: Participant[] = [];
+	participantsSubscription: Subscription;
 	emptyParticipants = false;
 	participantsNameCopied = false;
 	loadingDeleteParticipants = false;
@@ -55,6 +54,7 @@ export class EventParticipantsComponent implements OnInit, OnDestroy {
 
 	ngOnDestroy(): void {
 		if (this.eventSubscription) this.eventSubscription.unsubscribe();
+		if (this.participantsSubscription) this.participantsSubscription.unsubscribe();
 	}
 
 	async getEvent() {
@@ -73,15 +73,37 @@ export class EventParticipantsComponent implements OnInit, OnDestroy {
 	}
 
 	async getParticipants() {
-		const observable = await this.eventService.getParticipants(this.eventId)
-		this.participants = observable.pipe(
-			map(participants => {
-				this.emptyParticipants = participants.length === 0;
-				// capitalize and sort
-				participants.map(participant => participant.name = this.utilsService.capitalize(participant.name));
-				return participants.sort((a, b) => (a.name > b.name) ? 1 : -1);
-			})
-		);
+		this.eventService.getParticipantsStateChanges(this.eventId)
+			.then(observable => {
+				this.participants = [];
+				this.participantsSubscription = observable.pipe(
+					map(changes => {
+						let sort = false;
+						for (let index = 0; index < changes.length; index++) {
+							const itemDoc = changes[index];
+							const participant = itemDoc.payload.doc.data() as Participant;
+							if (itemDoc.type == 'added') {
+								this.participants.push(participant);
+								sort = true;
+							} else if (itemDoc.type == 'modified') {
+								// in theory this action does not exists
+							} else if (itemDoc.type == 'removed') {
+								const participantToRemove = this.participants.find(object => object.id === participant.id);
+								if (participantToRemove) {
+									const indexToRemove = this.participants.indexOf(participantToRemove);
+									if (indexToRemove >= 0) {
+										this.participants.splice(indexToRemove, 1);
+									}
+								}
+							}
+						}
+						if (sort) {
+							this.participants.sort((a, b) => (a.name > b.name) ? 1 : -1);
+						}
+						this.emptyParticipants = !this.participants.length;
+					})
+				).subscribe();
+			});
 	}
 
 	async onSubmitImportNamesForm() {
@@ -99,7 +121,7 @@ export class EventParticipantsComponent implements OnInit, OnDestroy {
 	}
 
 	async copyList() {
-		const participantName = (await firstValueFrom(this.participants)).map(participant => participant.name);
+		const participantName = this.participants.map(participant => participant.name);
 		this.utilsService.copyTextToClipboard(participantName.join('\n'));
 		this.participantsNameCopied = true;
 		setTimeout(() => this.participantsNameCopied = false, 2000);

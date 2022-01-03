@@ -16,6 +16,7 @@ interface Profile {
 })
 export class LoginComponent implements OnInit {
 
+	loadingLogin = false;
 	showModalEmitter = new EventEmitter<string>();
 
 	constructor(
@@ -30,18 +31,25 @@ export class LoginComponent implements OnInit {
 	}
 
 	login() {
+		this.loadingLogin = true;
 		this.auth.signInWithPopup(new firebase.auth.GoogleAuthProvider())
 			.then(async response => {
-				const userInfo = response.additionalUserInfo;
-				const email = (<Profile>userInfo?.profile).email;
-				const isAllowedUser = await this.userAccessService.isAllowedUser(email);
-				if (isAllowedUser) {
-					this.router.navigate(['/dashboard']);
-				} else {
+				try {
+					const userInfo = response.additionalUserInfo;
+					const email = (<Profile>userInfo?.profile).email;
+					const isAllowedUser = await this.userAccessService.isAllowedUser(email);
+					if (isAllowedUser) {
+						this.router.navigate(['/dashboard']);
+					} else {
+						throw new Error;
+					}
+				} catch {
 					response.user?.delete();
 					this.showModalEmitter.emit();
 				}
-			});
+			})
+			.catch(error => console.error(error))
+			.finally(() => this.loadingLogin = false);
 	}
 
 }

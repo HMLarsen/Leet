@@ -6,6 +6,7 @@ import { Timestamp } from '@angular/fire/firestore';
 import { Event } from '../model/event.model';
 import { Participant } from '../model/participant.model';
 import { firstValueFrom } from 'rxjs';
+import { UtilsService } from './utils.service';
 
 @Injectable({
 	providedIn: 'root'
@@ -19,7 +20,8 @@ export class EventService {
 	constructor(
 		private firestore: AngularFirestore,
 		private storage: AngularFireStorage,
-		private auth: AngularFireAuth
+		private auth: AngularFireAuth,
+		private utilsService: UtilsService
 	) { }
 
 	private getAuthUser() {
@@ -161,6 +163,7 @@ export class EventService {
 	async addParticipant(eventId: string, name: string, userEmail?: string) {
 		name = (name || '').trim();
 		if (!name) throw new Error;
+		name = this.utilsService.toTitleCase(name);
 		userEmail = userEmail || (await this.getAuthUser())?.email!;
 		const id = this.firestore.createId();
 		const fillDate = Timestamp.now();
@@ -188,6 +191,7 @@ export class EventService {
 		for (let index = 0; index < names.length; index++) {
 			let name = (names[index] || '').trim();
 			if (!name) continue;
+			name = this.utilsService.toTitleCase(name);
 			const id = this.firestore.createId();
 			const newParticipantRef = ref.doc(id);
 			batch.set(newParticipantRef, { id, name, fillDate });
@@ -195,7 +199,7 @@ export class EventService {
 		return batch.commit();
 	}
 
-	async getParticipants(eventId: string) {
+	async getParticipantsStateChanges(eventId: string) {
 		const userEmail = (await this.getAuthUser())?.email!;
 		return this.firestore
 			.collection(this.usersCollectionName)
@@ -203,7 +207,7 @@ export class EventService {
 			.collection(this.eventsCollectionName)
 			.doc(eventId)
 			.collection<Participant>(this.participantsCollectionName)
-			.valueChanges();
+			.stateChanges();
 	}
 
 	async getEventPublicUrlParams(eventId: string) {

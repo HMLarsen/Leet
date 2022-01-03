@@ -37,10 +37,10 @@
 		Nenhum participante
 	</div>
 
-	<div *ngIf="(participants | async)?.length" [@fadeInOut]>
+	<div *ngIf="participants.length" [@fadeInOut]>
 		<h5>Participantes</h5>
 		<h6 class="card-subtitle mb-3 text-muted">
-			<span>{{ (participants | async)?.length }} pessoa(s)</span>
+			<span>{{ participants.length }} pessoa(s)</span>
 		</h6>
 
 		<div id="list-options" class="d-flex justify-content-between flex-wrap">
@@ -62,7 +62,7 @@
 				</tr>
 			</thead>
 			<tbody>
-				<tr *ngFor="let participant of participants | async; trackBy: participantListTrackBy" [@inOutAnimation]="'in'">
+				<tr *ngFor="let participant of participants; trackBy: participantListTrackBy" [@inOutAnimation]="'in'">
 					<td class="participant-name pe-3">{{ participant.name }}</td>
 					<td class="text-end text-nowrap">{{ participant.fillDate.toDate() | date:'dd/MM/yyyy HH:mm' }}</td>
 				</tr>

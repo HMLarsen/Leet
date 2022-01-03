@@ -24,8 +24,8 @@ export class UtilsService {
 			'Z';
 	}
 
-	capitalize(s: string) {
-		return s.charAt(0).toUpperCase() + s.slice(1);
+	toTitleCase(str: string) {
+		return str.replace(/(?:^|\s|["'([{])+\S/g, match => match.toUpperCase());
 	}
 
 	copyTextToClipboard(text: string) {
