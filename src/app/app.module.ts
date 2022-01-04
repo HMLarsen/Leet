@@ -28,7 +28,6 @@ import { EventPublicComponent } from './events/event-public/event-public.compone
 import { EditorDirective } from './directives/editor.directive';
 import { EventParticipantsComponent } from './events/event-participants/event-participants.component';
 import { ModalComponent } from './modal/modal.component';
-import { EventsPaginationComponent } from './events-pagination/events-pagination.component';
 import { InfiniteScrollModule } from 'ngx-infinite-scroll';
 
 @NgModule({
@@ -42,8 +41,7 @@ import { InfiniteScrollModule } from 'ngx-infinite-scroll';
 		EventPublicComponent,
 		EditorDirective,
 		EventParticipantsComponent,
-		ModalComponent,
-		EventsPaginationComponent
+		ModalComponent
 	],
 	imports: [
 		BrowserModule,

@@ -7,6 +7,8 @@ import { Event } from '../model/event.model';
 import { Participant } from '../model/participant.model';
 import { firstValueFrom } from 'rxjs';
 import { UtilsService } from './utils.service';
+import { UserAccessService } from './user-access.service';
+import { ErrorService } from './error.service';
 
 @Injectable({
 	providedIn: 'root'
@@ -21,7 +23,9 @@ export class EventService {
 		private firestore: AngularFirestore,
 		private storage: AngularFireStorage,
 		private auth: AngularFireAuth,
-		private utilsService: UtilsService
+		private utilsService: UtilsService,
+		private userAccessService: UserAccessService,
+		private errorService: ErrorService
 	) { }
 
 	private getAuthUser() {
@@ -29,11 +33,20 @@ export class EventService {
 	}
 
 	async setEvent(event: Event) {
+		const creation = !event.id;
+		if (creation) {
+			const eventCount = await this.userAccessService.getUserEventCount();
+			const eventLimit = await this.userAccessService.getUserEventLimit();
+			if (eventCount >= eventLimit) {
+				throw new Error(this.errorService.MAX_LIMIT_EVENT);
+			}
+		}
+
 		// copy object to prevent original object changes
 		let eventCopy: Event = Object.assign({}, event);
 
 		// create new id if null
-		if (!eventCopy.id) {
+		if (creation) {
 			const newEventId = this.firestore.createId();
 			eventCopy.id = newEventId;
 			eventCopy.createdAt = Timestamp.now();
@@ -61,6 +74,10 @@ export class EventService {
 				throw e;
 			}
 		}
+		// inc event count if is an insertion
+		if (creation) {
+			await this.userAccessService.updateEventCount();
+		}
 		return eventCopy;
 	}
 
@@ -77,20 +94,13 @@ export class EventService {
 		return ref.put(file, metadata);
 	}
 
-	async getPaginatedEvents(limit: number, lastCreatedDate: Timestamp) {
+	async getEventsStateChanges() {
 		const userEmail = (await this.getAuthUser())?.email!;
-		return firstValueFrom(
-			this.firestore
-				.collection(this.usersCollectionName)
-				.doc(userEmail)
-				.collection<Event>(this.eventsCollectionName, ref => (
-					ref
-						.where('createdAt', '<', lastCreatedDate)
-						.orderBy('createdAt', 'desc')
-						.limit(limit)
-				))
-				.get()
-		);
+		return this.firestore
+			.collection(this.usersCollectionName)
+			.doc(userEmail)
+			.collection<Event>(this.eventsCollectionName)
+			.stateChanges();
 	}
 
 	async getEvent(eventId: string, userEmail?: string) {
@@ -121,6 +131,7 @@ export class EventService {
 		const filePath = `${this.usersCollectionName}/${userEmail}/events/${eventId}/banner`;
 		const ref = this.storage.ref(filePath);
 		await firstValueFrom(ref.delete());
+		await this.userAccessService.updateEventCount(true);
 	}
 
 	async deleteParticipants(eventId: string) {

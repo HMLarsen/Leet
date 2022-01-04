@@ -1,0 +1,67 @@
+// X-Small devices (portrait phones, less than 576px)
+// No media query for `xs` since this is the default in Bootstrap
+
+// Small devices (landscape phones, 576px and up)
+@media (min-width: 576px) {
+	.card {
+		width: 15.7rem !important;
+		margin: 0 0.5rem 1rem !important;
+	}
+}
+
+// Medium devices (tablets, 768px and up)
+@media (min-width: 768px) {
+	.card {
+		width: 20.7rem !important;
+		margin: 0 0.5rem 1rem !important;
+	}
+}
+
+// Large devices (desktops, 992px and up)
+@media (min-width: 992px) {
+	.card {
+		width: 28.2rem !important;
+		margin: 0 0.5rem 1rem !important;
+	}
+}
+
+// X-Large devices (large desktops, 1200px and up)
+@media (min-width: 1200px) {
+	.card {
+		width: 22.2rem !important;
+		margin: 0 0.5rem 1rem !important;
+	}
+}
+
+// XX-Large devices (larger desktops, 1400px and up)
+@media (min-width: 1400px) {
+	.card {
+		width: 26rem !important;
+		margin: 0 0.5rem 1rem !important;
+	}
+}
+
+.card {
+	width: 46rem;
+	margin: 0 0 1rem;
+	cursor: pointer;
+	transition: 0.3s transform cubic-bezier(0.155, 1.105, 0.295, 1.12), 0.3s box-shadow,
+		0.3s -webkit-transform cubic-bezier(0.155, 1.105, 0.295, 1.12);
+}
+
+.card:hover {
+	transform: scale(1.05);
+	box-shadow: 0 10px 20px rgba(0, 0, 0, 0.12), 0 4px 8px rgba(0, 0, 0, 0.06);
+}
+
+.card-img-top {
+	min-height: 8rem;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	background-color: lightgray;
+}
+
+.banner-not-found {
+	font-size: 4rem;
+}

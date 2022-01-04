@@ -7,6 +7,8 @@ import { FirestoreError } from '@angular/fire/firestore';
 })
 export class ErrorService {
 
+	MAX_LIMIT_EVENT = 'MAX_LIMIT_EVENT';
+
 	constructor() { }
 
 	translateError(error: any) {
@@ -14,6 +16,9 @@ export class ErrorService {
 		if (!error) return errorMessage;
 		if (error instanceof FirebaseError || error instanceof FirestoreError) {
 			errorMessage = this.translateFirebaseError(error) || errorMessage;
+		}
+		if (error && error.message === this.MAX_LIMIT_EVENT) {
+			return 'O limite de eventos foi alcançado, exclua ou edite um evento existente.';
 		}
 		return errorMessage;
 	}

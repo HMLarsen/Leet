@@ -26,7 +26,7 @@
 								<form [formGroup]="inviteForm" (ngSubmit)="onSubmit()" *ngIf="!nameConfirmed">
 									<fieldset [disabled]="loadingSubmit">
 										<div class="form-group mb-2">
-											<input placeholder="Nome completo" class="form-control" formControlName="participantName">
+											<input placeholder="Nome completo" class="form-control" formControlName="participantName" maxlength="100">
 										</div>
 										<button [disabled]="!inviteForm.valid" type="submit" class="btn btn-success w-100">
 											<span *ngIf="loadingSubmit" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>&nbsp;

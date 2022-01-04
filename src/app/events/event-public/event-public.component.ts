@@ -35,7 +35,7 @@ export class EventPublicComponent implements OnInit, OnDestroy {
 
 	ngOnInit(): void {
 		this.inviteForm = new FormGroup({
-			participantName: new FormControl('', [Validators.required, this.noWhitespaceValidator])
+			participantName: new FormControl('', [Validators.required, this.noWhitespaceValidator, Validators.maxLength(100)])
 		});
 		this.getEvent();
 	}
