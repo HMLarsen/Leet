@@ -1,4 +1,4 @@
-<div class="">
+<div class="mx-auto d-flex flex-column align-items-center justify-content-center login-container">
 	<h1 class="display-4 mb-5">Leet</h1>
 	<button (click)="login()" class="google-button btn btn-outline-dark" [disabled]="loadingLogin">
 		<div *ngIf="loadingLogin">
@@ -18,9 +18,9 @@
 	</button>
 </div>
 
-<div>
+<footer class="fixed-bottom text-center">
 	<p class="mb-1">Seu gerenciador de eventos</p>
-	<p class="">Criado por hugomarcel91@gmail.com</p>
-</div>
+	<p>Criado por hugomarcel91@gmail.com</p>
+</footer>
 
 <app-modal modalType="noUserPermission" [showModalEmitter]="showModalEmitter"></app-modal>
