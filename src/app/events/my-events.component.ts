@@ -55,11 +55,18 @@ export class MyEventsComponent implements OnInit, OnDestroy {
 								this.setEventBanner(event);
 								sort = true;
 							} else if (itemDoc.type == 'modified') {
-								// in theory this action does not exists
+								const eventToUpdate = this.events.find(object => object.id === event.id);
+								if (eventToUpdate) {
+									const indexToUpdate = this.events.indexOf(eventToUpdate);
+									if (indexToUpdate >= 0) {
+										this.events[indexToUpdate].name = event.name;
+										this.events[indexToUpdate].date = event.date;
+									}
+								}
 							} else if (itemDoc.type == 'removed') {
-								const participantToRemove = this.events.find(object => object.id === event.id);
-								if (participantToRemove) {
-									const indexToRemove = this.events.indexOf(participantToRemove);
+								const eventToRemove = this.events.find(object => object.id === event.id);
+								if (eventToRemove) {
+									const indexToRemove = this.events.indexOf(eventToRemove);
 									if (indexToRemove >= 0) {
 										this.events.splice(indexToRemove, 1);
 									}
