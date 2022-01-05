@@ -5,6 +5,7 @@ import { ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { fadeInOut } from 'src/app/animations';
 import { EventForShow } from 'src/app/model/event.model';
+import { SEOService } from 'src/app/seo.service';
 import { EventService } from 'src/app/services/event.service';
 
 @Component({
@@ -30,7 +31,7 @@ export class EventPublicComponent implements OnInit, OnDestroy {
 		private sanitizer: DomSanitizer,
 		private route: ActivatedRoute,
 		private eventService: EventService,
-		private titleService: Title
+		private seoService: SEOService
 	) { }
 
 	ngOnInit(): void {
@@ -65,7 +66,8 @@ export class EventPublicComponent implements OnInit, OnDestroy {
 							this.event.bannerUrl = bannerUrl;
 							this.eventDescriptionHtml = this.sanitizer.bypassSecurityTrustHtml(this.event.description);
 							if (!bannerUrl) this.setEventBanner();
-							this.titleService.setTitle(this.event.name);
+							this.seoService.updateTitle(this.event.name, false);
+							this.seoService.updateDescription(this.event.description);
 						} else {
 							this.loadingEvent = false;
 						}
@@ -77,7 +79,10 @@ export class EventPublicComponent implements OnInit, OnDestroy {
 
 	setEventBanner() {
 		this.eventService.getEventBanner(this.eventId!, this.eventUserEmail)
-			.then(downloadUrl => this.event.bannerUrl = downloadUrl)
+			.then(downloadUrl => {
+				this.event.bannerUrl = downloadUrl;
+				this.seoService.updateImage(downloadUrl);
+			})
 			.finally(() => this.loadingEvent = false);
 	}
 
