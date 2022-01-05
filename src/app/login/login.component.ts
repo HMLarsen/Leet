@@ -48,7 +48,7 @@ export class LoginComponent implements OnInit {
 					this.showModalEmitter.emit();
 				}
 			})
-			.catch(error => console.error(error))
+			.catch(() => {})
 			.finally(() => this.loadingLogin = false);
 	}
 
