@@ -1,10 +1,10 @@
 import { Component, EventEmitter, OnInit } from '@angular/core';
 import { Timestamp } from '@angular/fire/firestore';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
 import { firstValueFrom } from 'rxjs';
 import { fadeInOut } from 'src/app/animations';
+import { SEOService } from 'src/app/seo.service';
 import { ErrorService } from 'src/app/services/error.service';
 import { UtilsService } from 'src/app/services/utils.service';
 import { Event } from '../../model/event.model';
@@ -33,7 +33,7 @@ export class SetEventComponent implements OnInit {
 
 	constructor(
 		private route: ActivatedRoute,
-		private titleService: Title,
+		private seoService: SEOService,
 		private router: Router,
 		private eventService: EventService,
 		private utilsService: UtilsService,
@@ -57,7 +57,7 @@ export class SetEventComponent implements OnInit {
 		if (this.editing) {
 			this.getEventForEdit();
 		} else {
-			this.titleService.setTitle('Leet - Criar evento');
+			this.seoService.updateTitle('Criar evento');
 			this.loadingEventForEdit = false;
 		}
 	}
@@ -73,7 +73,7 @@ export class SetEventComponent implements OnInit {
 			this.eventForm.get('description')?.setValue(event.description);
 			this.eventForm.get('date')?.setValue(this.utilsService.toLocaleISOString(event.date?.toDate()).slice(0, -8));
 			this.eventForm.get('acceptingParticipations')?.setValue(event.acceptingParticipations);
-			this.titleService.setTitle('Leet - Editar ' + event.name);
+			this.seoService.updateTitle('Editar ' + event.name);
 		} else {
 			this.editingEventNotFound = true;
 		}

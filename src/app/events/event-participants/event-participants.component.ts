@@ -1,6 +1,5 @@
 import { ChangeDetectorRef, Component, EventEmitter, OnDestroy, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { Title } from '@angular/platform-browser';
 import { ActivatedRoute } from '@angular/router';
 import { map, Subscription } from 'rxjs';
 import { Event } from 'src/app/model/event.model';
@@ -9,6 +8,7 @@ import { EventService } from 'src/app/services/event.service';
 import { UtilsService } from 'src/app/services/utils.service';
 import { ErrorService } from 'src/app/services/error.service';
 import { fadeInOut, inOutAnimation } from 'src/app/animations';
+import { SEOService } from 'src/app/seo.service';
 
 @Component({
 	selector: 'app-event-participants',
@@ -39,7 +39,7 @@ export class EventParticipantsComponent implements OnInit, OnDestroy {
 		private route: ActivatedRoute,
 		private eventService: EventService,
 		private utilsService: UtilsService,
-		private titleService: Title,
+		private seoService: SEOService,
 		private errorService: ErrorService,
 		private changeDetectorRef: ChangeDetectorRef
 	) { }
@@ -63,7 +63,7 @@ export class EventParticipantsComponent implements OnInit, OnDestroy {
 			next: value => {
 				this.event = value!;
 				if (this.event) {
-					this.titleService.setTitle('Leet - ' + this.event.name);
+					this.seoService.updateTitle(this.event.name);
 					this.getParticipants();
 				}
 				this.loadingEvent = false;

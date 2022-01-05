@@ -12,7 +12,7 @@ export class SEOService {
 	) { }
 
 	updateTitle(title: string, prefix = true) {
-		const titleUpdated = prefix ? 'Leet - ' : '' + title;
+		const titleUpdated = (prefix ? 'Leet - ' : '') + title;
 		this.title.setTitle(titleUpdated);
 		this.meta.updateTag({ property: 'og:title', content: titleUpdated });
 		this.meta.updateTag({ name: 'twitter:title', content: titleUpdated });

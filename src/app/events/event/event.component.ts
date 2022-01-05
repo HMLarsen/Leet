@@ -1,5 +1,5 @@
 import { ChangeDetectorRef, Component, EventEmitter, OnDestroy, OnInit } from '@angular/core';
-import { DomSanitizer, SafeHtml, Title } from '@angular/platform-browser';
+import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
 import { EventForShow } from '../../model/event.model';
 import { EventService } from '../../services/event.service';
@@ -7,6 +7,7 @@ import { UtilsService } from 'src/app/services/utils.service';
 import { ErrorService } from 'src/app/services/error.service';
 import { Subscription } from 'rxjs';
 import { fadeInOut } from 'src/app/animations';
+import { SEOService } from 'src/app/seo.service';
 
 @Component({
 	selector: 'app-event',
@@ -34,7 +35,7 @@ export class EventComponent implements OnInit, OnDestroy {
 		private route: ActivatedRoute,
 		private router: Router,
 		private eventService: EventService,
-		private titleService: Title,
+		private seoService: SEOService,
 		private utilsService: UtilsService,
 		private changeDetectorRef: ChangeDetectorRef,
 		private errorService: ErrorService
@@ -60,7 +61,7 @@ export class EventComponent implements OnInit, OnDestroy {
 						this.event.bannerUrl = bannerUrl;
 						this.eventDescriptionHtml = this.sanitizer.bypassSecurityTrustHtml(this.event.description);
 						if (!bannerUrl) this.setEventBanner();
-						this.titleService.setTitle('Leet - ' + this.event.name);
+						this.seoService.updateTitle(this.event.name);
 					} else {
 						this.loadingEvent = false;
 					}

@@ -1,8 +1,8 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { Title } from '@angular/platform-browser';
 import { map, Subscription } from 'rxjs';
 import { fadeInOut, inOutAnimation } from '../animations';
 import { EventForShow } from '../model/event.model';
+import { SEOService } from '../seo.service';
 import { EventService } from '../services/event.service';
 import { UserAccessService } from '../services/user-access.service';
 
@@ -21,13 +21,13 @@ export class MyEventsComponent implements OnInit, OnDestroy {
 	eventLimit = 0;
 
 	constructor(
-		private titleService: Title,
+		private seoService: SEOService,
 		private eventService: EventService,
 		private userAccessService: UserAccessService
 	) { }
 
 	ngOnInit() {
-		this.titleService.setTitle('Leet - Meus eventos');
+		this.seoService.updateTitle('Meus eventos');
 		this.getEvents();
 		this.getEventLimit();
 	}
