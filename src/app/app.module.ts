@@ -28,7 +28,6 @@ import { EventPublicComponent } from './events/event-public/event-public.compone
 import { EditorDirective } from './directives/editor.directive';
 import { EventParticipantsComponent } from './events/event-participants/event-participants.component';
 import { ModalComponent } from './modal/modal.component';
-import { InfiniteScrollModule } from 'ngx-infinite-scroll';
 
 @NgModule({
 	declarations: [
@@ -52,8 +51,7 @@ import { InfiniteScrollModule } from 'ngx-infinite-scroll';
 		provideFirebaseApp(() => initializeApp(firebaseConfig)),
 		provideFirestore(() => getFirestore()),
 		provideAuth(() => getAuth()),
-		AngularFireStorageModule,
-		InfiniteScrollModule
+		AngularFireStorageModule
 	],
 	providers: [
 		{ provide: LOCALE_ID, useValue: 'pt-BR' }
