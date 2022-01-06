@@ -14,6 +14,7 @@ import { firebaseConfig } from '../environments/firebase.config';
 import { getFirestore, provideFirestore } from '@angular/fire/firestore';
 import { getAuth, provideAuth } from '@angular/fire/auth';
 import { AngularFireStorageModule } from '@angular/fire/compat/storage';
+import { AngularFireAnalyticsModule, CONFIG } from '@angular/fire/compat/analytics';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -52,10 +53,16 @@ import { ModalComponent } from './modal/modal.component';
 		provideFirebaseApp(() => initializeApp(firebaseConfig)),
 		provideFirestore(() => getFirestore()),
 		provideAuth(() => getAuth()),
-		AngularFireStorageModule
+		AngularFireStorageModule,
+		AngularFireAnalyticsModule
 	],
 	providers: [
-		{ provide: LOCALE_ID, useValue: 'pt-BR' }
+		{ provide: LOCALE_ID, useValue: 'pt-BR' },
+		{
+			provide: CONFIG, useValue: {
+				send_page_view: false
+			}
+		}
 	],
 	bootstrap: [AppComponent]
 })

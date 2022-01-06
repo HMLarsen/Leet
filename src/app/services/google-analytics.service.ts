@@ -1,33 +1,30 @@
 import { Injectable } from '@angular/core';
+import { AngularFireAnalytics, } from '@angular/fire/compat/analytics';
 import { NavigationEnd, Router } from '@angular/router';
 import { filter } from 'rxjs';
-
-declare let gtag: Function;
 
 @Injectable({
 	providedIn: 'root'
 })
 export class GoogleAnalyticsService {
 
-	GID = 'G-GY7CFZWL3S';
-
-	constructor(private router: Router) { }
+	constructor(
+		private router: Router,
+		private analytics: AngularFireAnalytics
+	) { }
 
 	setupAnalytics() {
-		gtag('js', new Date());
-		gtag('config', this.GID, { 'send_page_view': false });
-
 		// send page for every route navigated
 		this.router.events.pipe(filter(event => event instanceof NavigationEnd))
 			.subscribe((event: any) => this.sendPage(event.urlAfterRedirects));
 	}
 
 	private sendPage(url: string) {
-		gtag('event', 'page_view', { page_path: url });
+		this.analytics.logEvent('page_view', { page_path: url });
 	}
 
 	private addEvent(eventName: string, eventCategory: string) {
-		gtag('event', eventName, { eventCategory });
+		this.analytics.logEvent(eventName, { eventCategory });
 	}
 
 	addPublicParticipantEvent() {
