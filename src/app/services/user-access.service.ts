@@ -47,7 +47,7 @@ export class UserAccessService {
 		this.firestore
 			.collection(this.usersCollectionName)
 			.doc<User>(userEmail)
-			.update({ eventCount });
+			.set({ eventCount });
 	}
 
 	async getUserEventLimit() {
