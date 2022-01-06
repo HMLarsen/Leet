@@ -45,7 +45,7 @@ export class SetEventComponent implements OnInit {
 			createdAt: new FormControl(''),
 			bannerFile: new FormControl('', Validators.required),
 			name: new FormControl('', [Validators.required, Validators.minLength(5)]),
-			date: new FormControl(this.utilsService.toLocaleISOString(new Date()).slice(0, -8), Validators.required),
+			date: new FormControl(this.utilsService.toLocaleISOString(new Date()).slice(0, -8), [Validators.required, this.invalidDateValidator]),
 			description: new FormControl('', Validators.required),
 			acceptingParticipants: new FormControl(true, Validators.required)
 		});
@@ -60,6 +60,14 @@ export class SetEventComponent implements OnInit {
 			this.seoService.updateTitle('Criar evento');
 			this.loadingEventForEdit = false;
 		}
+	}
+
+	invalidDateValidator(control: FormControl) {
+		if (!control.value) return null;
+		const now = new Date();
+		now.setSeconds(0, 0);
+		const controlDate = new Date(control.value);
+		return controlDate >= now ? null : { backInTime: true };
 	}
 
 	async getEventForEdit() {

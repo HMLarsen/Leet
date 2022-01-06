@@ -46,8 +46,11 @@
 						<label for="date" class="form-label">Data</label>
 						<input type="datetime-local" id="date" class="form-control" formControlName="date"
 							[ngClass]="{ 'is-valid': getField('date').valid, 'is-invalid': getField('date').invalid && getField('date').touched }">
-						<div class="invalid-feedback">
+						<div class="invalid-feedback" *ngIf="getField('date').errors?.['required']">
 							Preencha corretamente a data de início do evento
+						</div>
+						<div class="invalid-feedback" *ngIf="getField('date').errors?.['backInTime']">
+							A data e hora de início não podem ser menores que a data e hora atuais
 						</div>
 					</div>
 				</div>
