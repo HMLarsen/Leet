@@ -3,13 +3,12 @@ import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { AngularFirestore, CollectionReference } from '@angular/fire/compat/firestore';
 import { AngularFireStorage } from '@angular/fire/compat/storage';
 import { Timestamp } from '@angular/fire/firestore';
+import { firstValueFrom } from 'rxjs';
 import { Event } from '../model/event.model';
 import { Participant } from '../model/participant.model';
-import { firstValueFrom } from 'rxjs';
-import { UtilsService } from './utils.service';
-import { UserAccessService } from './user-access.service';
 import { ErrorService } from './error.service';
-import { GoogleAnalyticsService } from './google-analytics.service';
+import { UserAccessService } from './user-access.service';
+import { UtilsService } from './utils.service';
 
 @Injectable({
 	providedIn: 'root'
@@ -26,8 +25,7 @@ export class EventService {
 		private auth: AngularFireAuth,
 		private utilsService: UtilsService,
 		private userAccessService: UserAccessService,
-		private errorService: ErrorService,
-		private googleAnalyticsService: GoogleAnalyticsService
+		private errorService: ErrorService
 	) { }
 
 	private getAuthUser() {
@@ -79,9 +77,6 @@ export class EventService {
 		// inc event count if is an insertion
 		if (creation) {
 			await this.userAccessService.updateEventCount();
-			this.googleAnalyticsService.createEventEvent();
-		} else {
-			this.googleAnalyticsService.editEventEvent();
 		}
 		return eventCopy;
 	}
@@ -137,7 +132,6 @@ export class EventService {
 		const ref = this.storage.ref(filePath);
 		await firstValueFrom(ref.delete());
 		await this.userAccessService.updateEventCount(true);
-		this.googleAnalyticsService.deleteEventEvent();
 	}
 
 	async deleteParticipants(eventId: string) {

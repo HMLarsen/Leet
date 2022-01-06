@@ -1,34 +1,31 @@
-import { NgModule } from '@angular/core';
+import { registerLocaleData } from '@angular/common';
+import localePt from '@angular/common/locales/pt';
+import { LOCALE_ID, NgModule } from '@angular/core';
+import { initializeApp, provideFirebaseApp } from '@angular/fire/app';
+import { getAuth, provideAuth } from '@angular/fire/auth';
+import { AngularFireModule } from '@angular/fire/compat';
+import { AngularFireStorageModule } from '@angular/fire/compat/storage';
+import { getFirestore, provideFirestore } from '@angular/fire/firestore';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-
-// locale pt-BR
-import { LOCALE_ID } from '@angular/core';
-import { registerLocaleData } from '@angular/common';
-import localePt from '@angular/common/locales/pt';
-registerLocaleData(localePt);
-
 // firebase
 import { firebaseConfig } from '../environments/firebase.config';
-import { getFirestore, provideFirestore } from '@angular/fire/firestore';
-import { getAuth, provideAuth } from '@angular/fire/auth';
-import { AngularFireStorageModule } from '@angular/fire/compat/storage';
-import { AngularFireAnalyticsModule, CONFIG } from '@angular/fire/compat/analytics';
-
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { LoginComponent } from './login/login.component';
-import { AngularFireModule } from '@angular/fire/compat';
 import { DashboardComponent } from './dashboard/dashboard.component';
-import { initializeApp, provideFirebaseApp } from '@angular/fire/app';
-import { SetEventComponent } from './events/set-event/set-event.component';
-import { EventComponent } from './events/event/event.component';
-import { MyEventsComponent } from './events/my-events.component';
-import { EventPublicComponent } from './events/event-public/event-public.component';
 import { EditorDirective } from './directives/editor.directive';
 import { EventParticipantsComponent } from './events/event-participants/event-participants.component';
+import { EventPublicComponent } from './events/event-public/event-public.component';
+import { EventComponent } from './events/event/event.component';
+import { MyEventsComponent } from './events/my-events.component';
+import { SetEventComponent } from './events/set-event/set-event.component';
+import { LoginComponent } from './login/login.component';
 import { ModalComponent } from './modal/modal.component';
+
+registerLocaleData(localePt);
+
+
 
 @NgModule({
 	declarations: [
@@ -53,16 +50,10 @@ import { ModalComponent } from './modal/modal.component';
 		provideFirebaseApp(() => initializeApp(firebaseConfig)),
 		provideFirestore(() => getFirestore()),
 		provideAuth(() => getAuth()),
-		AngularFireStorageModule,
-		AngularFireAnalyticsModule
+		AngularFireStorageModule
 	],
 	providers: [
-		{ provide: LOCALE_ID, useValue: 'pt-BR' },
-		{
-			provide: CONFIG, useValue: {
-				send_page_view: false
-			}
-		}
+		{ provide: LOCALE_ID, useValue: 'pt-BR' }
 	],
 	bootstrap: [AppComponent]
 })
