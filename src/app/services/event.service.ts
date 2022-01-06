@@ -226,4 +226,14 @@ export class EventService {
 		return btoa(`${eventId}|${userEmail}`);
 	}
 
+	async toggleAcceptingParticipants(eventId: string, accepting: boolean) {
+		const userEmail = (await this.getAuthUser())?.email!;
+		return this.firestore
+			.collection(this.usersCollectionName)
+			.doc(userEmail)
+			.collection(this.eventsCollectionName)
+			.doc<Event>(eventId)
+			.update({ 'acceptingParticipants': accepting });
+	}
+
 }

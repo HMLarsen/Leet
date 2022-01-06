@@ -7,7 +7,7 @@ export class Event {
 	name: string;
 	date: Timestamp;
 	description: string;
-	acceptingParticipations: boolean;
+	acceptingParticipants: boolean;
 }
 
 export class EventForShow extends Event {

@@ -73,6 +73,7 @@ export class EventParticipantsComponent implements OnInit, OnDestroy {
 	}
 
 	async getParticipants() {
+		if (this.participantsSubscription) return;
 		this.eventService.getParticipantsStateChanges(this.eventId)
 			.then(observable => {
 				this.participants = [];
@@ -149,6 +150,15 @@ export class EventParticipantsComponent implements OnInit, OnDestroy {
 				this.changeDetectorRef.detectChanges();
 				this.closeModalEmitter.emit();
 				this.showErrorModalEmitter.emit();
+			});
+	}
+
+	onAcceptingParticipantsChange() {
+		this.eventService.toggleAcceptingParticipants(this.eventId, this.event.acceptingParticipants)
+			.catch(e => {
+				this.errorMessage = this.errorService.translateError(e);
+				this.showErrorModalEmitter.emit();
+				this.event.acceptingParticipants = !this.event.acceptingParticipants;
 			});
 	}
 

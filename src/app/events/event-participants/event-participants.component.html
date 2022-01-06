@@ -16,6 +16,13 @@
 	<h6 class="card-subtitle mb-4 text-muted" *ngIf="event.date">
 		{{ event.date.seconds * 1000 | date:'EEEE - dd/MM/yyyy HH:mm' | titlecase }}
 	</h6>
+
+	<div class="form-check form-switch mb-3">
+		<input class="form-check-input" type="checkbox" role="switch" id="acceptingParticipants"
+			[(ngModel)]="event.acceptingParticipants" (change)="onAcceptingParticipantsChange()">
+		<label class="form-check-label" for="acceptingParticipants">Aceitando participantes</label>
+	</div>
+
 	<form [formGroup]="importNamesForm" (ngSubmit)="onSubmitImportNamesForm()" class="mb-4">
 		<fieldset [disabled]="loadingForm">
 			<div class="mb-2">
@@ -71,12 +78,4 @@
 	</div>
 </div>
 
-<app-modal modalType="deleteConfirmation"
-	[showModalEmitter]="showModalConfirmEmitter"
-	[closeModalEmitter]="closeModalEmitter"
-	[title]="'Excluir lista de participantes'"
-	detailMessage="Tem certeza que deseja excluir todos os participantes do evento?"
-	[errorMessage]="errorMessage"
-	[loading]="loadingDeleteParticipants"
-	[showErrorModalEmitter]="showErrorModalEmitter"
-	(confirm)="confirmDeleteParticipants()"></app-modal>
+<app-modal modalType="deleteConfirmation" [showModalEmitter]="showModalConfirmEmitter" [closeModalEmitter]="closeModalEmitter" [title]="'Excluir lista de participantes'" detailMessage="Tem certeza que deseja excluir todos os participantes do evento?" [errorMessage]="errorMessage" [loading]="loadingDeleteParticipants" [showErrorModalEmitter]="showErrorModalEmitter" (confirm)="confirmDeleteParticipants()"></app-modal>

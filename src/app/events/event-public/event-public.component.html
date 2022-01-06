@@ -21,7 +21,7 @@
 							</h6>
 							<p class="card-text ql-editor ql-classes" [innerHtml]="eventDescriptionHtml"></p>
 							<hr>
-							<div *ngIf="event.acceptingParticipations">
+							<div *ngIf="event.acceptingParticipants">
 								<h6 class="mb-3" *ngIf="!nameConfirmed">Participar</h6>
 								<form [formGroup]="inviteForm" (ngSubmit)="onSubmit()" *ngIf="!nameConfirmed">
 									<fieldset [disabled]="loadingSubmit">
@@ -44,7 +44,7 @@
 									</a>
 								</div>
 							</div>
-							<div *ngIf="!event.acceptingParticipations">
+							<div *ngIf="!event.acceptingParticipants">
 								<h6 class="mb-0">Lista para o evento encerrada!</h6>
 							</div>
 						</div>
