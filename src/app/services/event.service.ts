@@ -9,6 +9,7 @@ import { firstValueFrom } from 'rxjs';
 import { UtilsService } from './utils.service';
 import { UserAccessService } from './user-access.service';
 import { ErrorService } from './error.service';
+import { GoogleAnalyticsService } from './google-analytics.service';
 
 @Injectable({
 	providedIn: 'root'
@@ -25,7 +26,8 @@ export class EventService {
 		private auth: AngularFireAuth,
 		private utilsService: UtilsService,
 		private userAccessService: UserAccessService,
-		private errorService: ErrorService
+		private errorService: ErrorService,
+		private googleAnalyticsService: GoogleAnalyticsService
 	) { }
 
 	private getAuthUser() {
@@ -77,6 +79,9 @@ export class EventService {
 		// inc event count if is an insertion
 		if (creation) {
 			await this.userAccessService.updateEventCount();
+			this.googleAnalyticsService.createEventEvent();
+		} else {
+			this.googleAnalyticsService.editEventEvent();
 		}
 		return eventCopy;
 	}
@@ -132,6 +137,7 @@ export class EventService {
 		const ref = this.storage.ref(filePath);
 		await firstValueFrom(ref.delete());
 		await this.userAccessService.updateEventCount(true);
+		this.googleAnalyticsService.deleteEventEvent();
 	}
 
 	async deleteParticipants(eventId: string) {

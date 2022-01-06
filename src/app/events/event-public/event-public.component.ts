@@ -7,6 +7,7 @@ import { fadeInOut } from 'src/app/animations';
 import { EventForShow } from 'src/app/model/event.model';
 import { SEOService } from 'src/app/seo.service';
 import { EventService } from 'src/app/services/event.service';
+import { GoogleAnalyticsService } from 'src/app/services/google-analytics.service';
 
 @Component({
 	selector: 'app-event-public',
@@ -31,7 +32,8 @@ export class EventPublicComponent implements OnInit, OnDestroy {
 		private sanitizer: DomSanitizer,
 		private route: ActivatedRoute,
 		private eventService: EventService,
-		private seoService: SEOService
+		private seoService: SEOService,
+		private googleAnalyticsService: GoogleAnalyticsService
 	) { }
 
 	ngOnInit(): void {
@@ -91,6 +93,7 @@ export class EventPublicComponent implements OnInit, OnDestroy {
 		const participantName = this.inviteForm.get('participantName')?.value.trim();
 		this.eventService.addParticipant(this.eventId, participantName, this.eventUserEmail)
 			.then(() => {
+				this.googleAnalyticsService.addPublicParticipantEvent();
 				this.nameConfirmed = true;
 				this.inviteForm.reset();
 			})

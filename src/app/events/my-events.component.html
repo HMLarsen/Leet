@@ -1,6 +1,6 @@
 <h1 class="display-6">Meus eventos</h1>
 <div class="card-subtitle mb-3 text-muted" *ngIf="events.length && eventLimit" [@fadeInOut]>
-	<span>{{ events.length }} / {{ eventLimit }}</span>
+	<span [ngClass]="{ 'text-red': events.length === eventLimit }">{{ events.length }} / {{ eventLimit }}</span>
 </div>
 <div class="d-flex flex-wrap justify-content-center align-items-center">
 	<div class="card" *ngFor="let event of events" [@inOutAnimation]="'in'" routerLink="/dashboard/events/{{ event.id }}">
