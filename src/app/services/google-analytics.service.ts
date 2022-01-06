@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
 import { filter } from 'rxjs';
-import { firebaseConfig } from 'src/environments/firebase.config';
 
 declare let gtag: Function;
 
@@ -10,11 +9,13 @@ declare let gtag: Function;
 })
 export class GoogleAnalyticsService {
 
+	GID = 'G-GY7CFZWL3S';
+
 	constructor(private router: Router) { }
 
 	setupAnalytics() {
 		gtag('js', new Date());
-		gtag('config', firebaseConfig.measurementId, { 'send_page_view': false });
+		gtag('config', this.GID, { 'send_page_view': false });
 
 		// send page for every route navigated
 		this.router.events.pipe(filter(event => event instanceof NavigationEnd))
