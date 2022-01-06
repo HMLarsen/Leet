@@ -13,6 +13,7 @@ export class GoogleAnalyticsService {
 	constructor(private router: Router) { }
 
 	setupAnalytics() {
+		gtag('js', new Date());
 		gtag('config', firebaseConfig.measurementId, { 'send_page_view': false });
 
 		// send page for every route navigated
