@@ -4,7 +4,7 @@ import { fadeInOut, inOutAnimation } from '../animations';
 import { EventForShow } from '../model/event.model';
 import { SEOService } from '../seo.service';
 import { EventService } from '../services/event.service';
-import { UserAccessService } from '../services/user-access.service';
+import { UserService } from '../services/user-access.service';
 
 @Component({
 	selector: 'app-my-events',
@@ -23,7 +23,7 @@ export class MyEventsComponent implements OnInit, OnDestroy {
 	constructor(
 		private seoService: SEOService,
 		private eventService: EventService,
-		private userAccessService: UserAccessService
+		private userService: UserService
 	) { }
 
 	ngOnInit() {
@@ -37,7 +37,7 @@ export class MyEventsComponent implements OnInit, OnDestroy {
 	}
 
 	async getEventLimit() {
-		this.eventLimit = (await this.userAccessService.getUserEventLimit());
+		this.eventLimit = (await this.userService.getUserEventLimit());
 	}
 
 	getEvents() {

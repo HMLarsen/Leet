@@ -3,7 +3,7 @@ import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { Router } from '@angular/router';
 import firebase from 'firebase/compat/app';
 import { SEOService } from '../seo.service';
-import { UserAccessService } from '../services/user-access.service';
+import { UserService } from '../services/user-access.service';
 
 interface Profile {
 	email: string;
@@ -22,7 +22,7 @@ export class LoginComponent implements OnInit {
 	constructor(
 		private seoService: SEOService,
 		private router: Router,
-		private userAccessService: UserAccessService,
+		private userService: UserService,
 		public auth: AngularFireAuth
 	) { }
 
@@ -37,7 +37,7 @@ export class LoginComponent implements OnInit {
 				try {
 					const userInfo = response.additionalUserInfo;
 					const email = (<Profile>userInfo?.profile).email;
-					const isAllowedUser = await this.userAccessService.isAllowedUser(email);
+					const isAllowedUser = await this.userService.isAllowedUser(email);
 					if (isAllowedUser) {
 						this.router.navigate(['/dashboard']);
 					} else {
@@ -48,7 +48,7 @@ export class LoginComponent implements OnInit {
 					this.showModalEmitter.emit();
 				}
 			})
-			.catch(() => {})
+			.catch(() => { })
 			.finally(() => this.loadingLogin = false);
 	}
 

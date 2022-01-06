@@ -7,7 +7,7 @@ import { firstValueFrom } from 'rxjs';
 import { Event } from '../model/event.model';
 import { Participant } from '../model/participant.model';
 import { ErrorService } from './error.service';
-import { UserAccessService } from './user-access.service';
+import { UserService } from './user-access.service';
 import { UtilsService } from './utils.service';
 
 @Injectable({
@@ -24,7 +24,7 @@ export class EventService {
 		private storage: AngularFireStorage,
 		private auth: AngularFireAuth,
 		private utilsService: UtilsService,
-		private userAccessService: UserAccessService,
+		private userService: UserService,
 		private errorService: ErrorService
 	) { }
 
@@ -35,8 +35,8 @@ export class EventService {
 	async setEvent(event: Event) {
 		const creation = !event.id;
 		if (creation) {
-			const eventCount = await this.userAccessService.getUserEventCount();
-			const eventLimit = await this.userAccessService.getUserEventLimit();
+			const eventCount = await this.userService.getUserEventCount();
+			const eventLimit = await this.userService.getUserEventLimit();
 			if (eventCount >= eventLimit) {
 				throw new Error(this.errorService.MAX_LIMIT_EVENT);
 			}
@@ -76,7 +76,7 @@ export class EventService {
 		}
 		// inc event count if is an insertion
 		if (creation) {
-			await this.userAccessService.updateEventCount();
+			await this.userService.updateEventCount();
 		}
 		return eventCopy;
 	}
@@ -131,7 +131,7 @@ export class EventService {
 		const filePath = `${this.usersCollectionName}/${userEmail}/events/${eventId}/banner`;
 		const ref = this.storage.ref(filePath);
 		await firstValueFrom(ref.delete());
-		await this.userAccessService.updateEventCount(true);
+		await this.userService.updateEventCount(true);
 	}
 
 	async deleteParticipants(eventId: string) {

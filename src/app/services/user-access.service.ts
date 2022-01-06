@@ -2,12 +2,12 @@ import { Injectable } from '@angular/core';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
 import { firstValueFrom } from 'rxjs';
-import { User } from '../model/user.model';
+import { User, UserAccess } from '../model/user.model';
 
 @Injectable({
 	providedIn: 'root'
 })
-export class UserAccessService {
+export class UserService {
 
 	accessCollectionName = 'access';
 	usersCollectionName = 'users';
@@ -22,43 +22,61 @@ export class UserAccessService {
 		return this.auth.currentUser;
 	}
 
-	async isAllowedUser(userEmail: string) {
+	async getUserAccess() {
+		const userEmail = (await this.getAuthUser())?.email!;
 		const refObservable = this.firestore
 			.collection(this.accessCollectionName)
-			.doc(userEmail)
+			.doc<UserAccess>(userEmail)
 			.get();
-		return (await firstValueFrom(refObservable)).exists;
+		return (await firstValueFrom(refObservable)).data();
 	}
 
-	async getUserEventCount() {
+	async getUser() {
 		const userEmail = (await this.getAuthUser())?.email!;
 		const refObservable = this.firestore
 			.collection(this.usersCollectionName)
 			.doc<User>(userEmail)
 			.get();
-		const data = (await firstValueFrom(refObservable)).data();
-		if (data) return data.eventCount || 0;
+		return (await firstValueFrom(refObservable)).data();
+	}
+
+	async isAllowedUser(userEmail: string) {
+		const refObservable = this.firestore
+			.collection(this.accessCollectionName)
+			.doc<UserAccess>(userEmail)
+			.get();
+		const userAccess = (await firstValueFrom(refObservable));
+		if (!userAccess.exists) return false;
+		return userAccess.data()?.allowed;
+	}
+
+	async getUserEventLimit() {
+		const userAccess = await this.getUserAccess();
+		if (userAccess) {
+			return userAccess.eventLimit || this.DEFAULT_EVENT_LIMIT;
+		}
+		return this.DEFAULT_EVENT_LIMIT;
+	}
+
+	async getUserEventCount() {
+		const user = await this.getUser();
+		if (user) {
+			return user.eventCount || 0;
+		}
 		return 0;
 	}
 
 	async updateEventCount(dec = false) {
-		const eventCount = await this.getUserEventCount() + (dec ? -1 : 1);
+		let user = await this.getUser();
+		if (!user) {
+			user = { eventCount: 0 };
+		}
+		user.eventCount += (dec ? -1 : 1);
 		const userEmail = (await this.getAuthUser())?.email!;
 		this.firestore
 			.collection(this.usersCollectionName)
 			.doc<User>(userEmail)
-			.set({ eventCount });
-	}
-
-	async getUserEventLimit() {
-		const userEmail = (await this.getAuthUser())?.email!;
-		const refObservable = this.firestore
-			.collection(this.usersCollectionName)
-			.doc<User>(userEmail)
-			.get();
-		const data = (await firstValueFrom(refObservable)).data();
-		if (data) return data.eventLimit || this.DEFAULT_EVENT_LIMIT;
-		return this.DEFAULT_EVENT_LIMIT;
+			.set(user);
 	}
 
 }
