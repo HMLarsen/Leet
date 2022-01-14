@@ -12,7 +12,7 @@
 		<i class="bi-chevron-left"></i>&nbsp;
 		Voltar ao evento
 	</div>
-	<h1 class="display-6">{{ event.name }}</h1>
+	<h1>{{ event.name }}</h1>
 	<h6 class="card-subtitle mb-4 text-muted" *ngIf="event.date">
 		{{ event.date.seconds * 1000 | date:'EEEE - dd/MM/yyyy HH:mm' | titlecase }}
 	</h6>

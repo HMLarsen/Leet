@@ -158,7 +158,7 @@ export class EventService {
 		const batch = collectionRef.firestore.batch();
 		for (let index = 0; index < snapshot.docs.length; index++) {
 			const doc = snapshot.docs[index];
-			batch.delete(doc.ref)
+			batch.delete(doc.ref);
 		}
 		await batch.commit();
 		await this.deleteCollectionQueryBatch(collectionRef);
