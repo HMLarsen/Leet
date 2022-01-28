@@ -30,17 +30,17 @@
 										</div>
 										<button [disabled]="!inviteForm.valid" type="submit" class="btn btn-success w-100">
 											<span *ngIf="loadingSubmit" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>&nbsp;
-											<span>{{ loadingSubmit ? 'Quase lá' : 'Confirmar participação' }}</span>
+											<span>{{ loadingSubmit ? 'Quase lá' : 'Confirmar presença' }}</span>
 										</button>
 									</fieldset>
 								</form>
 								<div [@fadeInOut] *ngIf="nameConfirmed">
 									<span class="col-xs-12 me-3">
 										<i class="bi bi-person-check-fill"></i>&nbsp;
-										Participação confirmada!
+										Presença confirmada!
 									</span>
 									<a class="nav-link add-another-participant d-sm-inline ps-0 pb-0" (click)="nameConfirmed = false">
-										Adicionar outra participação
+										Adicionar outro nome
 									</a>
 								</div>
 							</div>
