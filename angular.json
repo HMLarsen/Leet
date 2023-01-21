@@ -113,6 +113,8 @@
 				}
 			}
 		}
-	},
-	"defaultProject": "leet"
+  },
+  "cli": {
+    "analytics": false
+  }
 }

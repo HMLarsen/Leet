@@ -1,6 +1,6 @@
 import { Component, EventEmitter, OnInit } from '@angular/core';
 import { Timestamp } from '@angular/fire/firestore';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { UntypedFormControl, UntypedFormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { firstValueFrom } from 'rxjs';
 import { fadeInOut } from 'src/app/animations';
@@ -18,7 +18,7 @@ import { EventService } from '../../services/event.service';
 })
 export class SetEventComponent implements OnInit {
 
-	eventForm: FormGroup;
+	eventForm: UntypedFormGroup;
 	loadingFormSubmit = false;
 	editor: any;
 	submitFormErrorMessage: string;
@@ -41,13 +41,13 @@ export class SetEventComponent implements OnInit {
 	) { }
 
 	ngOnInit(): void {
-		this.eventForm = new FormGroup({
-			createdAt: new FormControl(''),
-			bannerFile: new FormControl('', Validators.required),
-			name: new FormControl('', [Validators.required, Validators.minLength(5)]),
-			date: new FormControl(this.utilsService.toLocaleISOString(new Date()).slice(0, -8), [Validators.required, this.invalidDateValidator]),
-			description: new FormControl('', Validators.required),
-			acceptingParticipants: new FormControl(true, Validators.required)
+		this.eventForm = new UntypedFormGroup({
+			createdAt: new UntypedFormControl(''),
+			bannerFile: new UntypedFormControl('', Validators.required),
+			name: new UntypedFormControl('', [Validators.required, Validators.minLength(5)]),
+			date: new UntypedFormControl(this.utilsService.toLocaleISOString(new Date()).slice(0, -8), [Validators.required, this.invalidDateValidator]),
+			description: new UntypedFormControl('', Validators.required),
+			acceptingParticipants: new UntypedFormControl(true, Validators.required)
 		});
 
 		// editing?
@@ -62,7 +62,7 @@ export class SetEventComponent implements OnInit {
 		}
 	}
 
-	invalidDateValidator(control: FormControl) {
+	invalidDateValidator(control: UntypedFormControl) {
 		if (!control.value) return null;
 		const now = new Date();
 		now.setSeconds(0, 0);

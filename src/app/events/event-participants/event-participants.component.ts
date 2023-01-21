@@ -1,5 +1,5 @@
 import { ChangeDetectorRef, Component, EventEmitter, OnDestroy, OnInit } from '@angular/core';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { UntypedFormControl, UntypedFormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { map, Subscription } from 'rxjs';
 import { Event } from 'src/app/model/event.model';
@@ -22,7 +22,7 @@ export class EventParticipantsComponent implements OnInit, OnDestroy {
 	event: Event;
 	eventSubscription: Subscription;
 	loadingEvent = true;
-	importNamesForm: FormGroup;
+	importNamesForm: UntypedFormGroup;
 	loadingForm = false;
 	errorMessage: string;
 	showModalConfirmEmitter = new EventEmitter<string>();
@@ -46,8 +46,8 @@ export class EventParticipantsComponent implements OnInit, OnDestroy {
 
 	ngOnInit(): void {
 		this.eventId = this.route.snapshot.paramMap.get('id')!;
-		this.importNamesForm = new FormGroup({
-			names: new FormControl('', Validators.required)
+		this.importNamesForm = new UntypedFormGroup({
+			names: new UntypedFormControl('', Validators.required)
 		});
 		this.getEvent();
 	}

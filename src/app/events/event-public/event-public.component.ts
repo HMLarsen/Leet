@@ -1,5 +1,5 @@
 import { Component, EventEmitter, OnDestroy, OnInit } from '@angular/core';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { UntypedFormControl, UntypedFormGroup, Validators } from '@angular/forms';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs';
@@ -21,7 +21,7 @@ export class EventPublicComponent implements OnInit, OnDestroy {
 	event: EventForShow;
 	eventSubscription: Subscription;
 	loadingEvent = true;
-	inviteForm: FormGroup;
+	inviteForm: UntypedFormGroup;
 	loadingSubmit: boolean;
 	nameConfirmed: boolean;
 	showModalEmitter = new EventEmitter<string>();
@@ -35,8 +35,8 @@ export class EventPublicComponent implements OnInit, OnDestroy {
 	) { }
 
 	ngOnInit(): void {
-		this.inviteForm = new FormGroup({
-			participantName: new FormControl('', [Validators.required, this.noWhitespaceValidator, Validators.maxLength(100)])
+		this.inviteForm = new UntypedFormGroup({
+			participantName: new UntypedFormControl('', [Validators.required, this.noWhitespaceValidator, Validators.maxLength(100)])
 		});
 		this.getEvent();
 	}
@@ -45,7 +45,7 @@ export class EventPublicComponent implements OnInit, OnDestroy {
 		if (this.eventSubscription) this.eventSubscription.unsubscribe();
 	}
 
-	noWhitespaceValidator(control: FormControl) {
+	noWhitespaceValidator(control: UntypedFormControl) {
 		const isWhitespace = (control.value || '').trim().length === 0;
 		const isValid = !isWhitespace && (control.value || '').trim().length >= 5;
 		return isValid ? null : { 'whitespace': true };

@@ -1,13 +1,13 @@
 import { ChangeDetectorRef, Component, EventEmitter, OnDestroy, OnInit } from '@angular/core';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
-import { EventForShow } from '../../model/event.model';
-import { EventService } from '../../services/event.service';
-import { UtilsService } from 'src/app/services/utils.service';
-import { ErrorService } from 'src/app/services/error.service';
 import { Subscription } from 'rxjs';
 import { fadeInOut } from 'src/app/animations';
 import { SEOService } from 'src/app/seo.service';
+import { ErrorService } from 'src/app/services/error.service';
+import { UtilsService } from 'src/app/services/utils.service';
+import { EventForShow } from '../../model/event.model';
+import { EventService } from '../../services/event.service';
 
 @Component({
 	selector: 'app-event',

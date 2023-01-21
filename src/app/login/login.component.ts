@@ -2,6 +2,7 @@ import { Component, EventEmitter, OnInit } from '@angular/core';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { Router } from '@angular/router';
 import firebase from 'firebase/compat/app';
+import packageJson from '../../../package.json';
 import { SEOService } from '../seo.service';
 import { UserService } from '../services/user-access.service';
 
@@ -16,6 +17,7 @@ interface Profile {
 })
 export class LoginComponent implements OnInit {
 
+	appVersion = packageJson.version;
 	loadingLogin = false;
 	showModalEmitter = new EventEmitter<string>();
 
